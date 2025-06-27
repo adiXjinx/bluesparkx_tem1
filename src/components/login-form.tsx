@@ -14,7 +14,6 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
-
 import { cn } from "@/lib/utils";
 
 import {
@@ -25,8 +24,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { Supabase } from "@/utils/supabase/client";
 
 const Login = () => {
   // define form
@@ -39,10 +38,16 @@ const Login = () => {
   });
 
   // define submit handler
-  const onsubbmit = (values: loginData) => {
+  const onsubbmit = async (values: loginData) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+
+    const { data, error } = await Supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
+    console.log(data);
   };
 
   return (
@@ -144,7 +149,9 @@ const Login = () => {
                     <Link
                       href="/signup"
                       className="underline underline-offset-4"
-                    >Sign up</Link>
+                    >
+                      Sign up
+                    </Link>
                   </div>
                 </div>
               </CardContent>

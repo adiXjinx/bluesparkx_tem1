@@ -1,13 +1,18 @@
-"use client"
+"use client";
 
-import { signupData, signupSchema } from "@/schemas/form-schema"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { FormControl, FormField, FormItem, FormLabel, FormMessage,Form } from "./ui/form"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
-
-
+import { signupData, signupSchema } from "@/schemas/form-schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Form,
+} from "./ui/form";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 import { cn } from "@/lib/utils";
 
@@ -18,10 +23,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link"
+import Link from "next/link";
 
-
-
+import { Supabase } from "@/utils/supabase/client";
 
 const Signup = () => {
   // define form
@@ -30,21 +34,35 @@ const Signup = () => {
     defaultValues: {
       username: "",
       email: "",
-      password : "", 
+      password: "",
       fname: "",
       lname: "",
     },
   });
 
   // define submit handler
-  const onsubbmit = (values: signupData) => {
+  const onsubbmit = async (values: signupData) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+
+    const { data, error } = await Supabase.auth.signUp({
+      email: values.email,
+      password: values.password,
+      options: {
+        // Optional:
+        data: {
+          firstname: values.fname,
+          lastname: values.lname,
+          username: values.username,
+        },
+        emailRedirectTo: "http://localhost:3000", // after email confirmations
+      },
+    });
+
+    console.log(data);
   };
 
-    
-    
   return (
     <>
       <div className={cn("flex flex-col gap-6")}>
@@ -209,7 +227,6 @@ const Signup = () => {
       </div>
     </>
   );
-}
+};
 
-
-export default Signup 
+export default Signup;
