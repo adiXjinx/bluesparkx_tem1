@@ -13,9 +13,7 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-
 import { cn } from "@/lib/utils";
-
 import {
   Card,
   CardContent,
@@ -25,7 +23,14 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 
-import { Supabase } from "@/utils/supabase/client";
+import { useState } from "react";
+
+import { signupUser } from "@/app/actions/action";
+import { useResponseHandler } from "../helpers/useResponseHandler";
+import { useRouter } from "next/navigation";
+
+
+
 
 const Signup = () => {
   // define form
@@ -40,34 +45,28 @@ const Signup = () => {
     },
   });
 
-  // define submit handler
-  const onsubbmit = async (values: signupData) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  // states 
+  const [loading, setLoading] = useState<boolean>(false)
+  const router = useRouter()
 
-    const { data, error } = await Supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-      options: {
-        // Optional:
-        data: {
-          firstname: values.fname,
-          lastname: values.lname,
-          username: values.username,
-        },
-        emailRedirectTo: "http://localhost:3000", // after email confirmations
-      },
-    });
+  const handleResponse = useResponseHandler()
 
-    console.log(data);
+
+  const onSubmit = async (values: signupData) => {
+    setLoading(true);
+    const result = await signupUser(values);
+    handleResponse(result);
+    if (result.status === 'success') {
+      router.push("/auth/login")
+    }
+    setLoading(false);
   };
 
   return (
     <>
       <div className={cn("flex flex-col gap-6")}>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onsubbmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Card>
               <CardHeader className="text-center">
                 <CardTitle className="text-xl">Welcome</CardTitle>
@@ -200,14 +199,44 @@ const Signup = () => {
                         )}
                       />
                     </div>
-                    <Button type="submit" className="w-full">
-                      Signup
-                    </Button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="px-4 py-2 flex items-center justify-center gap-2 rounded-md bg-primary disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <>
+                          <svg
+                            className="h-4 w-4 animate-spin"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                            ></path>
+                          </svg>
+                          Loading...
+                        </>
+                      ) : (
+                        "Sign Up"
+                      )}
+                    </button>
                   </div>
                   <div className="text-center text-sm">
                     Have an account?{" "}
                     <Link
-                      href="/login"
+                      href="/auth/login"
                       className="underline underline-offset-4"
                     >
                       {" "}

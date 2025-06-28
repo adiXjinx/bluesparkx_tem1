@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/ui/mode-toggle";
+import Header from "@/components/header";
+import { Toaster } from "react-hot-toast";
 
 
 export const metadata: Metadata = {
@@ -26,8 +28,29 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Header />
           {children}
-          <ModeToggle/>
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              className: 'vercel-toast',
+              duration: 4000,
+              style: {
+                background: 'var(--background)',
+                color: 'var(--foreground)',
+                border: '1px solid var(--border)',
+                borderRadius: '0.5rem',
+                fontSize: '0.875rem',
+                padding: '0.75rem 1rem',
+              },
+              success: {
+                className: 'vercel-toast vercel-toast-success',
+              },
+              error: {
+                className: 'vercel-toast vercel-toast-error',
+              },
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

@@ -117,7 +117,25 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Vercel-inspired glass effect */
+@layer utilities {
+  .glass {
+    @apply bg-background/60 backdrop-blur-md border border-border/50;
+  }
+
+  .transition-smooth {
+    @apply transition-all duration-200 ease-out;
+  }
+
+}
+
+/* Custom toaster styles */
+.vercel-toast {
+  @apply bg-background/95 backdrop-blur-sm border border-border/50 shadow-lg;
 }
