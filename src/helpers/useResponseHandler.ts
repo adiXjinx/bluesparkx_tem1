@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { ErrorComponent } from "./error-component";
+import { ErrorComponent } from "../components/error-component";
 
 type Response = { status: string; message: string;[key: string]: any };
 

@@ -25,8 +25,8 @@ import Link from "next/link";
 
 import { useState } from "react";
 
-import  {signupUser}  from "@/app/actions/action";
-import { useResponseHandler } from "./useResponseHandler";
+import { signupUser } from "@/app/actions/action";
+import { useResponseHandler } from "../helpers/useResponseHandler";
 import { useRouter } from "next/navigation";
 
 
@@ -48,9 +48,9 @@ const Signup = () => {
   // states 
   const [loading, setLoading] = useState<boolean>(false)
   const router = useRouter()
-  
-   const handleResponse = useResponseHandler()
-  
+
+  const handleResponse = useResponseHandler()
+
 
   const onSubmit = async (values: signupData) => {
     setLoading(true);

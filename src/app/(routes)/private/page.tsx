@@ -1,6 +1,6 @@
 import { getUserProfile } from "@/app/actions/action";
 import { User } from "@supabase/supabase-js";
-import { useResponseHandler } from "@/components/useResponseHandler";
+import { useResponseHandler } from "@/helpers/useResponseHandler";
 
 interface Profile {
   firstname: string;

@@ -1,7 +1,7 @@
 "use server"
 
 import { loginData, signupData } from "@/schemas/form-schema";
-import { createResponse } from "@/utils/createResponce";
+import { createResponse } from "@/helpers/createResponce";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
@@ -19,7 +19,7 @@ export async function signupUser(values: signupData) {
         firstname: values.fname,
         lastname: values.lname,
       },
-      emailRedirectTo: "http://localhost:3000/confirm",
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/confirm`,
     },
   });
 
@@ -109,7 +109,7 @@ export async function getUserProfile() {
   const { data: profileData, error: profileError } = await supabase
     .from("profile")
     .select("*")
-    .eq("user_idj", userData.user.id)
+    .eq("user_id", userData.user.id)
     .single();
 
   if (profileError) {

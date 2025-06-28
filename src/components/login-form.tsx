@@ -29,13 +29,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signinUser } from "@/app/actions/action";
-import { useResponseHandler } from "./useResponseHandler";
+import { useResponseHandler } from "../helpers/useResponseHandler";
 
 
 const Login = () => {
 
-   
-  
+
+
   // define form
   const form = useForm<loginData>({
     resolver: zodResolver(loginSchema),
@@ -45,12 +45,12 @@ const Login = () => {
     },
   });
 
- // states 
+  // states 
   const [loading, setLoading] = useState<boolean>(false)
   const router = useRouter()
   const handleResponse = useResponseHandler()
 
-  
+
   const onsubbmit = async (values: loginData) => {
 
     setLoading(true);
