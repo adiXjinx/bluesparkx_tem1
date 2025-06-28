@@ -2,9 +2,9 @@
 
 import toast from "react-hot-toast";
 import { ReactNode } from "react";
-import { ErrorComponent } from "./error-component";
+import { ErrorComponent } from "@/components/error-component";
 
-type Response = { status: string; message: string;[key: string]: any };
+type Response = { status: string; message: string;[key: string]: unknown };
 
 interface ResponseHandlerOptions {
     showSuccess?: boolean;

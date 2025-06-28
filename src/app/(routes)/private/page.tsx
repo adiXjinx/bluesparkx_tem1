@@ -1,6 +1,6 @@
 import { getUserProfile } from "@/app/actions/action";
 import { User } from "@supabase/supabase-js";
-import { useResponseHandler } from "@/helpers/useResponseHandler";
+import { ErrorComponent } from "@/components/error-component";
 
 interface Profile {
   firstname: string;
@@ -9,17 +9,11 @@ interface Profile {
 }
 
 export default async function PrivatePage() {
-  const handleResponse = useResponseHandler({
-    errorUI: true
-  });
   const result = await getUserProfile();
 
-  // Handle response with custom options
-  const responseInfo = handleResponse(result);
-
-  // If responseInfo is a ReactNode (error component), render it
-  if (responseInfo && typeof responseInfo === 'object' && 'type' in responseInfo) {
-    return responseInfo;
+  // Handle response directly since we can't use hooks in async functions
+  if (result.status === "error") {
+    return ErrorComponent({ message: result.message });
   }
 
   const { user, profile } = result.data as { user: User; profile: Profile };

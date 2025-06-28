@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { ErrorComponent } from "../components/error-component";
 
-type Response = { status: string; message: string;[key: string]: any };
+type Response = { status: string; message: string;[key: string]: unknown };
 
 interface ResponseHandlerOptions {
   showSuccess?: boolean;
@@ -12,13 +12,7 @@ interface ResponseHandlerOptions {
 }
 
 export function useResponseHandler(options: ResponseHandlerOptions = {}) {
-  const {
-    showSuccess = true,
-    showError = true,
-    showInfo = true,
-    showWarning = true,
-    errorUI = false
-  } = options;
+  const { errorUI = false } = options;
 
   return function handleResponse(res: Response): Response | ReactNode {
     // Return error component if errorUI is enabled and there's an error
