@@ -6,24 +6,24 @@ import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 // can do i think but i think use can pass zod errors
-export  async function signupUser(values:signupData) {
+export async function signupUser(values: signupData) {
 
   const supabase = await createClient();
-  
-    const { data, error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            username: values.username,
-            firstname: values.fname,
-            lastname: values.lname,
-          },
-          emailRedirectTo: "http://localhost:3000/confirm",
-        },
-    });
-    
-    // handle responce  
+
+  const { data, error } = await supabase.auth.signUp({
+    email: values.email,
+    password: values.password,
+    options: {
+      data: {
+        username: values.username,
+        firstname: values.fname,
+        lastname: values.lname,
+      },
+      emailRedirectTo: "http://localhost:3000/confirm",
+    },
+  });
+
+  // handle responce  
   if (error) {
     return createResponse("error", error.message)
 
@@ -33,7 +33,7 @@ export  async function signupUser(values:signupData) {
     revalidatePath("/", "layout");
     return createResponse("success", "Signup successful! Check your email to confirm your account.", data.user)
   }
-  
+
 }
 
 
@@ -62,15 +62,15 @@ export async function signinUser(values: loginData) {
     // If not, create profile using user_metadata from auth
     if (!existinguser) {
       const meta = data.user.user_metadata
-     const {error} = await supabase.from("profile").insert({
-          email: data.user.email,
-          username: meta.username , 
-          firstname: meta.firstname ,
-          lastname: meta.lastname,
-     })
+      const { error } = await supabase.from("profile").insert({
+        email: data.user.email,
+        username: meta.username,
+        firstname: meta.firstname,
+        lastname: meta.lastname,
+      })
       if (error) {
         return createResponse("error", error.message);
-      } 
+      }
     }
 
     return createResponse("success", "Signed in successfully!", data.user);
@@ -78,25 +78,62 @@ export async function signinUser(values: loginData) {
 }
 
 
-export  async function signoutUser() {
+export async function signoutUser() {
 
-    const supabase =  await createClient();
+  const supabase = await createClient();
 
-    const {  error } = await supabase.auth.signOut()
-  
-    if (error) {
-      return createResponse("error", error.message)
-    } else {
-      return createResponse("success", "Signed out successfully")
-    }
+  const { error } = await supabase.auth.signOut()
+
+  if (error) {
+    return createResponse("error", error.message)
+  } else {
+    return createResponse("success", "Signed out successfully")
+  }
+}
+
+export async function getUserProfile() {
+  const supabase = await createClient();
+
+  // Get current user
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    return createResponse("error", userError.message);
   }
 
-    
-   
-    
+  if (!userData.user) {
+    return createResponse("error", "User not authenticated");
+  }
 
-    
-        
+  // Get user profile
+  const { data: profileData, error: profileError } = await supabase
+    .from("profile")
+    .select("*")
+    .eq("user_idj", userData.user.id)
+    .single();
+
+  if (profileError) {
+    return createResponse("error", profileError.message);
+  }
+
+  if (!profileData) {
+    return createResponse("error", "Profile not found");
+  }
+
+  return createResponse("success", "Profile retrieved successfully", {
+    user: userData.user,
+    profile: profileData
+  });
+}
+
+
+
+
+
+
+
+
+
 
 
 
