@@ -25,9 +25,17 @@ import {
 } from "@/components/ui/card";
 
 import Link from "next/link";
-import { Supabase } from "@/utils/supabase/client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signinUser } from "@/app/actions/action";
+import { useResponseHandler } from "./useResponseHandler";
+
 
 const Login = () => {
+
+   
+  
   // define form
   const form = useForm<loginData>({
     resolver: zodResolver(loginSchema),
@@ -37,17 +45,21 @@ const Login = () => {
     },
   });
 
-  // define submit handler
-  const onsubbmit = async (values: loginData) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+ // states 
+  const [loading, setLoading] = useState<boolean>(false)
+  const router = useRouter()
+  const handleResponse = useResponseHandler()
 
-    const { data, error } = await Supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password,
-    });
-    console.log(data);
+  
+  const onsubbmit = async (values: loginData) => {
+
+    setLoading(true);
+    const result = await signinUser(values);
+    handleResponse(result);
+    if (result.status === "success") {
+      router.push("/");
+    }
+    setLoading(false);
   };
 
   return (
@@ -140,14 +152,44 @@ const Login = () => {
                         )}
                       />
                     </div>
-                    <Button type="submit" className="w-full">
-                      Login
-                    </Button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="px-4 py-2 flex items-center justify-center gap-2 rounded-md bg-primary disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <>
+                          <svg
+                            className="h-4 w-4 animate-spin"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                            ></path>
+                          </svg>
+                          Loading...
+                        </>
+                      ) : (
+                        "Sign in"
+                      )}
+                    </button>
                   </div>
                   <div className="text-center text-sm">
                     Don&apos;t have an account?{" "}
                     <Link
-                      href="/signup"
+                      href="/auth/signup"
                       className="underline underline-offset-4"
                     >
                       Sign up
