@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-
-
-const userModel = z.object({
+export const userModel = z.object({
 
   username: z
     .string()
@@ -11,36 +9,29 @@ const userModel = z.object({
       message: "Username can only contain letters, numbers, and underscores.",
     }),
 
-    email: z
-      .string()
-      .email({ message: "Enter a valid email." })
-      .refine(
-        (email) => {
-          const domain = email.split("@")[1]?.toLowerCase();
-          return domain && allowedEmailDomains.includes(domain);
-          }, { message: `We don't support that domain` }),
-    
-    password: z
+  email: z
+    .string()
+    .email({ message: "Enter a valid email." })
+    .refine(
+      (email) => {
+        const domain = email.split("@")[1]?.toLowerCase();
+        return domain && allowedEmailDomains.includes(domain);
+      }, { message: `We don't support that domain` }),
+
+  password: z
     .string()
     .min(8, { message: "Must be at least 8 characters" })
     .regex(/[a-z]/, { message: "Must include a lowercase letter" })
     .regex(/[A-Z]/, { message: "Must include an uppercase letter" })
     .regex(/[0-9]/, { message: "Must include a number" }),
-    
-    fname: z.string(),
-  
-    lname: z.string(),
-  
+
+  fname: z.string(),
+
+  lname: z.string(),
+
 });
 
-
 export type UserModel = z.infer<typeof userModel>
-
-
-
-
-
-
 
 const allowedEmailDomains = [
   "gmail.com", // Google
