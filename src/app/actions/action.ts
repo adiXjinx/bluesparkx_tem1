@@ -38,23 +38,44 @@ export  async function signupUser(values:signupData) {
 
 
 // can do client side for this 
-export  async function signinUser(values:loginData) {
+export async function signinUser(values: loginData) {
+  const supabase = await createClient();
 
-    const supabase =  await createClient();
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: values.email,
+    password: values.password,
+  });
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password,
-    });
-  
   if (error) {
     return createResponse("error", error.message);
   } else if (!data.user) {
     return createResponse("error", "User not found or email not confirmed.");
   } else {
+
+    // Check if profile exists
+    const { data: existinguser } = await supabase
+      .from("profile")
+      .select("*")
+      .eq("user_id", data.user.id)
+      .single();
+
+    // If not, create profile using user_metadata from auth
+    if (!existinguser) {
+      const meta = data.user.user_metadata
+     const {error} = await supabase.from("profile").insert({
+          email: data.user.email,
+          username: meta.username , 
+          firstname: meta.firstname ,
+          lastname: meta.lastname,
+     })
+      if (error) {
+        return createResponse("error", error.message);
+      } 
+    }
+
     return createResponse("success", "Signed in successfully!", data.user);
   }
-  }
+}
 
 
 export  async function signoutUser() {

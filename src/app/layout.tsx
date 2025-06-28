@@ -30,7 +30,27 @@ export default function RootLayout({
         >
           <Header />
           {children}
-          <Toaster position="bottom-right" />
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              className: 'vercel-toast',
+              duration: 4000,
+              style: {
+                background: 'var(--background)',
+                color: 'var(--foreground)',
+                border: '1px solid var(--border)',
+                borderRadius: '0.5rem',
+                fontSize: '0.875rem',
+                padding: '0.75rem 1rem',
+              },
+              success: {
+                className: 'vercel-toast vercel-toast-success',
+              },
+              error: {
+                className: 'vercel-toast vercel-toast-error',
+              },
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

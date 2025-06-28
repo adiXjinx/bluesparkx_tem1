@@ -6,49 +6,51 @@ import Signout from "./sign-out";
 
 export default async function Header() {
 
-    const supabase = await createClient()
+  const supabase = await createClient()
 
-    const { data: { user } } = await supabase.auth.getUser()
-    
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
-    <header className="w-full border-b bg-background/80 backdrop-blur sticky top-0 z-50">
-      <div className="container mx-auto flex items-center justify-between py-3 px-2">
+    <header className="w-full glass vercel-shadow sticky top-0 z-50">
+      <div className="container mx-auto flex items-center justify-between py-4 px-4">
         {/* Left: Logo or Home */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="font-bold text-xl hover:opacity-80 transition"
+            className="font-semibold text-lg tracking-tight hover:opacity-80 transition-smooth"
           >
             Home
           </Link>
           <Link
             href="/private"
-            className="text-base hover:opacity-70 transition"
+            className="text-sm text-muted-foreground hover:text-foreground transition-smooth"
           >
             Private
           </Link>
         </div>
 
         {/* Right: Login & Sign Up */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <ModeToggle />
           {!user ? (
             <>
               <Link href="/auth/login">
-                <Button variant="ghost" size="sm" className="rounded-xl px-4">
+                <Button variant="ghost" size="sm" className="font-medium">
                   Login
                 </Button>
               </Link>
               <Link href="/auth/signup">
-                <Button size="sm" className="rounded-xl px-4">
+                <Button variant="outline" size="sm" className="font-medium">
                   Sign Up
                 </Button>
               </Link>
             </>
           ) : (
-                          <> 
-                              {user.email}
-              <Signout/>
+            <>
+              <span className="text-sm text-muted-foreground font-medium">
+                {user.email}
+              </span>
+              <Signout />
             </>
           )}
         </div>
