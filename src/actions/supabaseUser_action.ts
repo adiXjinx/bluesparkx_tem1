@@ -1,11 +1,12 @@
 "use server"
 
-import { UserModel } from "@/schemas/userModel"
+import { UserModel } from "@/schemas/user_schema"
 import { createResponse } from "@/helpers/createResponce"
 import { createClient } from "@/utils/supabase/server"
 import { revalidatePath } from "next/cache"
 
-// can do i think but i think use can pass zod errors
+// ! Authendication
+
 export async function signupUser(values: UserModel) {
   const supabase = await createClient()
 
@@ -37,7 +38,6 @@ export async function signupUser(values: UserModel) {
   }
 }
 
-// can do client side for this
 export async function signinUser(values: UserModel) {
   const supabase = await createClient()
 
@@ -88,6 +88,8 @@ export async function signoutUser() {
   }
 }
 
+// ! Profile
+
 export async function getUserProfile() {
   const supabase = await createClient()
 
@@ -121,4 +123,68 @@ export async function getUserProfile() {
     user: userData.user,
     profile: profileData,
   })
+}
+
+export async function updateProfile(values: UserModel) {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: userData, error: userError } = await supabase.auth.getUser()
+
+  if (userError) {
+    return createResponse("error", userError.message)
+  }
+
+  if (!userData.user) {
+    return createResponse("error", "User not authenticated")
+  }
+
+  // Update user profile
+  const { error } = await supabase
+    .from("profile")
+    .update({
+      username: values.username,
+      firstname: values.fname,
+      lastname: values.lname,
+    })
+    .eq("user_id", userData.user.id)
+
+  if (error) {
+    return createResponse("error", error.message)
+  }
+
+  return createResponse("success", "Profile updated successfully")
+}
+
+// ! Delete
+
+export async function deleteUser() {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: userData, error: userError } = await supabase.auth.getUser()
+
+  if (userError) {
+    return createResponse("error", userError.message)
+  }
+
+  if (!userData.user) {
+    return createResponse("error", "User not authenticated")
+  }
+
+  // Delete user profile
+  const { error } = await supabase.from("profile").delete().eq("user_id", userData.user.id)
+
+  if (error) {
+    return createResponse("error", error.message)
+  }
+
+  // Delete user
+  const { error: authError } = await supabase.auth.admin.deleteUser(userData.user.id)
+
+  if (authError) {
+    return createResponse("error", authError.message)
+  }
+
+  return createResponse("success", "User deleted successfully")
 }

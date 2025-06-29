@@ -2,7 +2,7 @@
 import React, { useState } from "react"
 import { Button } from "./ui/button"
 import { useResponseHandler } from "../helpers/useResponseHandler"
-import { signoutUser } from "@/app/actions/action"
+import { signoutUser } from "@/actions/supabaseUser_action"
 import { useRouter } from "next/navigation"
 
 const Signout = () => {

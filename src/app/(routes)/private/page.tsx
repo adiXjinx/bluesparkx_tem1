@@ -1,4 +1,4 @@
-import { getUserProfile } from "@/app/actions/action"
+import { getUserProfile } from "@/actions/supabaseUser_action"
 import { User } from "@supabase/supabase-js"
 import { ErrorComponent } from "@/components/error-component"
 
