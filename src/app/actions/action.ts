@@ -1,12 +1,12 @@
 "use server"
 
-import { loginData, signupData } from "@/schemas/form-schema"
+import { UserModel } from "@/schemas/userModel"
 import { createResponse } from "@/helpers/createResponce"
 import { createClient } from "@/utils/supabase/server"
 import { revalidatePath } from "next/cache"
 
 // can do i think but i think use can pass zod errors
-export async function signupUser(values: signupData) {
+export async function signupUser(values: UserModel) {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signUp({
@@ -38,7 +38,7 @@ export async function signupUser(values: signupData) {
 }
 
 // can do client side for this
-export async function signinUser(values: loginData) {
+export async function signinUser(values: UserModel) {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signInWithPassword({

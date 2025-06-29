@@ -1,6 +1,6 @@
 "use client"
 
-import { signupData, signupSchema } from "@/schemas/form-schema"
+
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, Form } from "./ui/form"
@@ -15,11 +15,12 @@ import { useState } from "react"
 import { signupUser } from "@/app/actions/action"
 import { useResponseHandler } from "../helpers/useResponseHandler"
 import { useRouter } from "next/navigation"
+import { UserModel, userModel } from "@/schemas/userModel"
 
 const Signup = () => {
   // define form
-  const form = useForm<signupData>({
-    resolver: zodResolver(signupSchema),
+  const form = useForm<UserModel>({
+    resolver: zodResolver(userModel),
     defaultValues: {
       username: "",
       email: "",
@@ -35,7 +36,7 @@ const Signup = () => {
 
   const handleResponse = useResponseHandler()
 
-  const onSubmit = async (values: signupData) => {
+  const onSubmit = async (values: UserModel) => {
     setLoading(true)
     const result = await signupUser(values)
     handleResponse(result)
