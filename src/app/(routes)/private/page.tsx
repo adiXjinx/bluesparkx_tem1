@@ -1,4 +1,3 @@
-
 import { getUserProfile } from "@/actions/supabaseUser_action"
 import { User } from "@supabase/supabase-js"
 import { ErrorComponent } from "@/components/error-component"
@@ -27,7 +26,7 @@ export default async function PrivatePage() {
         <p className="text-muted-foreground text-sm">Your ID: {user.id}</p>
       </div>
       <div>
-        <h1>Your Profile</h1>
+        <h1>Your Profile</h1> 
         <p>First Name: {profile.firstname}</p>
         <p>Last Name: {profile.lastname}</p>
         <p>Username: {profile.username}</p>

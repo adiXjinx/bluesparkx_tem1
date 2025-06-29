@@ -4,10 +4,13 @@ import { LoginModel, UpdateProfileModel, UserModel } from "@/schemas/user_schema
 import { createResponse } from "@/helpers/createResponce"
 import { createClient } from "@/utils/supabase/server"
 import { revalidatePath } from "next/cache"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 
 // ! Authendication
 
 export async function signupUser(values: UserModel) {
+   const origin = (await headers()).get("origin")
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signUp({
@@ -19,7 +22,7 @@ export async function signupUser(values: UserModel) {
         firstname: values.fname,
         lastname: values.lname,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirm`,
+      emailRedirectTo: `${origin}/auth/confirm`,
     },
   })
 
@@ -51,6 +54,7 @@ export async function signinUser(values: LoginModel) {
   } else if (!data.user) {
     return createResponse("error", "User not found or email not confirmed.")
   } else {
+
     // Check if profile exists
     const { data: existinguser } = await supabase
       .from("profile")
@@ -88,7 +92,32 @@ export async function signoutUser() {
   }
 }
 
-// ! Profile
+// sign in with Authproviders
+
+export async function signinWithAuth(provider: "google" | "github") {
+  const origin = (await headers()).get("origin")
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: provider,
+    options: {
+      redirectTo : `${origin}/auth/callback`,
+    }
+  })
+
+  // todo use custom error comp
+  if (error) {
+    redirect ("/error")
+  } else {
+    redirect(data.url)
+  }
+}
+
+
+
+
+
+// ! User and Profile
 
 export async function getUserProfile() {
   const supabase = await createClient()
@@ -154,6 +183,20 @@ export async function updateUserProfile(values: UpdateProfileModel) {
   }
 
   return createResponse("success", "Profile updated successfully")
+}
+
+export async function getUser() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.getUser()
+
+  if (error) {
+    return createResponse("error", error.message)
+  } else if (!data.user) {
+    return createResponse("error", "User not found")
+  } else {
+    return createResponse("success", "User retrieved successfully", data.user)
+  }
 }
 
 // ! Delete

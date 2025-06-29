@@ -2,7 +2,7 @@ import React from "react"
 
 const Homepage = () => {
   return (
-    <div>
+    <div className="m-7">
       Homepage Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus ipsum atque nostrum
       quia ad, dolorem enim nihil quaerat corporis repellat aperiam quasi, molestias incidunt quis
       iste! Libero odio, officia eaque quod accusantium quas velit repudiandae possimus quae amet

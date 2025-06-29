@@ -27,8 +27,8 @@ export default function UpdateProfileComponent({profile, user}: {profile: Profil
   const form = useForm<UpdateProfileModel>({
     resolver: zodResolver(updateProfileModel),
     defaultValues: {
-      fname: profile.firstname,
-      lname: profile.lastname,
+      fname: profile.firstname || "",
+      lname: profile.lastname || "",
       username: profile.username,
     },
   })
