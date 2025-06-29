@@ -18,7 +18,7 @@ export async function signupUser(values: signupData) {
         firstname: values.fname,
         lastname: values.lname,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/authconfirm`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirm`,
     },
   })
 
