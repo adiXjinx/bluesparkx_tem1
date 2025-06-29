@@ -1,12 +1,16 @@
 "use server"
 
-import { loginData, signupData } from "@/schemas/form-schema"
+import { LoginModel, UpdateProfileModel, UserModel } from "@/schemas/user_schema"
 import { createResponse } from "@/helpers/createResponce"
 import { createClient } from "@/utils/supabase/server"
 import { revalidatePath } from "next/cache"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 
-// can do i think but i think use can pass zod errors
-export async function signupUser(values: signupData) {
+// ! Authendication
+
+export async function signupUser(values: UserModel) {
+  const origin = (await headers()).get("origin")
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signUp({
@@ -18,7 +22,7 @@ export async function signupUser(values: signupData) {
         firstname: values.fname,
         lastname: values.lname,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirm`,
+      emailRedirectTo: `${origin}/auth/confirm`,
     },
   })
 
@@ -37,8 +41,7 @@ export async function signupUser(values: signupData) {
   }
 }
 
-// can do client side for this
-export async function signinUser(values: loginData) {
+export async function signinUser(values: LoginModel) {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -88,6 +91,29 @@ export async function signoutUser() {
   }
 }
 
+// sign in with Authproviders
+
+export async function signinWithAuth(provider: "google" | "github") {
+  const origin = (await headers()).get("origin")
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: provider,
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+    },
+  })
+
+  // todo use custom error comp
+  if (error) {
+    redirect("/error")
+  } else {
+    redirect(data.url)
+  }
+}
+
+// ! User and Profile
+
 export async function getUserProfile() {
   const supabase = await createClient()
 
@@ -121,4 +147,82 @@ export async function getUserProfile() {
     user: userData.user,
     profile: profileData,
   })
+}
+
+export async function updateUserProfile(values: UpdateProfileModel) {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: userData, error: userError } = await supabase.auth.getUser()
+
+  if (userError) {
+    return createResponse("error", userError.message)
+  }
+
+  if (!userData.user) {
+    return createResponse("error", "User not authenticated")
+  }
+
+  // Update user profile
+  const { error } = await supabase
+    .from("profile")
+    .update({
+      username: values.username,
+      firstname: values.fname,
+      lastname: values.lname,
+    })
+    .eq("user_id", userData.user.id)
+
+  if (error) {
+    return createResponse("error", error.message)
+  }
+
+  return createResponse("success", "Profile updated successfully")
+}
+
+export async function getUser() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.getUser()
+
+  if (error) {
+    return createResponse("error", error.message)
+  } else if (!data.user) {
+    return createResponse("error", "User not found")
+  } else {
+    return createResponse("success", "User retrieved successfully", data.user)
+  }
+}
+
+// ! Delete
+
+export async function deleteUser() {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: userData, error: userError } = await supabase.auth.getUser()
+
+  if (userError) {
+    return createResponse("error", userError.message)
+  }
+
+  if (!userData.user) {
+    return createResponse("error", "User not authenticated")
+  }
+
+  // Delete user profile
+  const { error } = await supabase.from("profile").delete().eq("user_id", userData.user.id)
+
+  if (error) {
+    return createResponse("error", error.message)
+  }
+
+  // Delete user
+  const { error: authError } = await supabase.auth.admin.deleteUser(userData.user.id)
+
+  if (authError) {
+    return createResponse("error", authError.message)
+  }
+
+  return createResponse("success", "User deleted successfully")
 }
