@@ -10,7 +10,7 @@ import { redirect } from "next/navigation"
 // ! Authendication
 
 export async function signupUser(values: UserModel) {
-   const origin = (await headers()).get("origin")
+  const origin = (await headers()).get("origin")
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signUp({
@@ -54,7 +54,6 @@ export async function signinUser(values: LoginModel) {
   } else if (!data.user) {
     return createResponse("error", "User not found or email not confirmed.")
   } else {
-
     // Check if profile exists
     const { data: existinguser } = await supabase
       .from("profile")
@@ -101,21 +100,17 @@ export async function signinWithAuth(provider: "google" | "github") {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: provider,
     options: {
-      redirectTo : `${origin}/auth/callback`,
-    }
+      redirectTo: `${origin}/auth/callback`,
+    },
   })
 
   // todo use custom error comp
   if (error) {
-    redirect ("/error")
+    redirect("/error")
   } else {
     redirect(data.url)
   }
 }
-
-
-
-
 
 // ! User and Profile
 

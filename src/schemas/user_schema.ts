@@ -1,6 +1,5 @@
 import { z } from "zod"
 
-
 // ! Signup schema
 export const userModel = z.object({
   username: z
@@ -35,9 +34,7 @@ export const userModel = z.object({
 
 export type UserModel = z.infer<typeof userModel>
 
-
-
-// ! signin schema 
+// ! signin schema
 export const loginModel = z.object({
   email: z
     .string()
@@ -60,8 +57,6 @@ export const loginModel = z.object({
 
 export type LoginModel = z.infer<typeof loginModel>
 
-
-
 // ! allowed email domains
 const allowedEmailDomains = [
   "gmail.com", // Google
@@ -83,7 +78,6 @@ const allowedEmailDomains = [
   "fastmail.com", // Paid, verified, trusted
   "tutanota.com", // Privacy-focused, verified signups
 ]
-
 
 export const updateProfileModel = z.object({
   username: z

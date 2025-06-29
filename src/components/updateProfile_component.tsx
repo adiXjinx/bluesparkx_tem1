@@ -1,5 +1,4 @@
 "use client"
-import { User } from "@supabase/supabase-js"
 import {
   FormControl,
   FormField,
@@ -22,8 +21,7 @@ interface Profile {
   username: string
 }
 
-export default function UpdateProfileComponent({profile, user}: {profile: Profile; user: User}) {
-
+export default function UpdateProfileComponent({ profile }: { profile: Profile }) {
   const form = useForm<UpdateProfileModel>({
     resolver: zodResolver(updateProfileModel),
     defaultValues: {
@@ -46,7 +44,7 @@ export default function UpdateProfileComponent({profile, user}: {profile: Profil
 
   return (
     <>
-      <div className="flex flex-col gap-6 w-full max-w-[440px] mx-auto border p-6 rounded-lg ">
+      <div className="mx-auto flex w-full max-w-[440px] flex-col gap-6 rounded-lg border p-6">
         <h1 className="text-2xl font-bold">Update Profile</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -89,11 +87,7 @@ export default function UpdateProfileComponent({profile, user}: {profile: Profil
                 </FormItem>
               )}
             />
-            <Button
-              type="submit"
-              disabled={loading}
-              className="btn btn-primary w-full"
-            >
+            <Button type="submit" disabled={loading} className="btn btn-primary w-full">
               {loading ? "Updating..." : "Update"}
             </Button>
           </form>

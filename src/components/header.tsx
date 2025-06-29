@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./ui/mode-toggle"
 import { createClient } from "@/utils/supabase/server"
 import Signout from "./sign-out"
-import Image from "next/image"
 
 export default async function Header() {
   const supabase = await createClient()

@@ -9,7 +9,7 @@ const LoginGithub = () => {
 
   const handleGithubLogin = () => {
     startTransition(async () => {
-      await signinWithAuth("github");
+      await signinWithAuth("github")
     })
   }
 

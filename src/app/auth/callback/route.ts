@@ -40,7 +40,7 @@ export async function GET(request: Request) {
           email: data.user.email,
           username: data.user.user_metadata.user_name,
           firstname: data.user.user_metadata.first_name || "",
-            lastname: data.user.user_metadata.last_name || "",
+          lastname: data.user.user_metadata.last_name || "",
           // todo if user don't have f and l name send them to update there name
         })
         if (cUserprofileError) {
