@@ -112,7 +112,6 @@
   --sidebar-ring: oklch(0.488 0.243 264.376);
 }
 
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -126,16 +125,15 @@
 /* Vercel-inspired glass effect */
 @layer utilities {
   .glass {
-    @apply bg-background/60 backdrop-blur-md border border-border/50;
+    @apply bg-background/60 border-border/50 border backdrop-blur-md;
   }
 
   .transition-smooth {
     @apply transition-all duration-200 ease-out;
   }
-
 }
 
 /* Custom toaster styles */
 .vercel-toast {
-  @apply bg-background/95 backdrop-blur-sm border border-border/50 shadow-lg;
+  @apply bg-background/95 border-border/50 border shadow-lg backdrop-blur-sm;
 }

@@ -1,7 +1,7 @@
-import Signup from "@/components/signup-form";
-import { GalleryVerticalEnd } from "lucide-react";
-import React from "react";
-import Link from "next/link";
+import Signup from "@/components/signup-form"
+import { GalleryVerticalEnd } from "lucide-react"
+import React from "react"
+import Link from "next/link"
 
 const Login2 = () => {
   return (
@@ -16,7 +16,7 @@ const Login2 = () => {
         <Signup />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login2;
+export default Login2

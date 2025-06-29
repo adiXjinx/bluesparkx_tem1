@@ -1,29 +1,30 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ModeToggle } from "./ui/mode-toggle";
-import { createClient } from "@/utils/supabase/server";
-import Signout from "./sign-out";
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { ModeToggle } from "./ui/mode-toggle"
+import { createClient } from "@/utils/supabase/server"
+import Signout from "./sign-out"
 
 export default async function Header() {
-
   const supabase = await createClient()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   return (
-    <header className="w-full glass vercel-shadow sticky top-0 z-50">
-      <div className="container mx-auto flex items-center justify-between py-4 px-4">
+    <header className="glass vercel-shadow sticky top-0 z-50 w-full">
+      <div className="container mx-auto flex items-center justify-between px-4 py-4">
         {/* Left: Logo or Home */}
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="font-semibold text-lg tracking-tight hover:opacity-80 transition-smooth"
+            className="transition-smooth text-lg font-semibold tracking-tight hover:opacity-80"
           >
             Home
           </Link>
           <Link
             href="/private"
-            className="text-sm text-muted-foreground hover:text-foreground transition-smooth"
+            className="text-muted-foreground hover:text-foreground transition-smooth text-sm"
           >
             Private
           </Link>
@@ -47,14 +48,12 @@ export default async function Header() {
             </>
           ) : (
             <>
-              <span className="text-sm text-muted-foreground font-medium">
-                {user.email}
-              </span>
+              <span className="text-muted-foreground text-sm font-medium">{user.email}</span>
               <Signout />
             </>
           )}
         </div>
       </div>
     </header>
-  );
+  )
 }
