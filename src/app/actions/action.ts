@@ -1,14 +1,13 @@
 "use server"
 
-import { loginData, signupData } from "@/schemas/form-schema";
-import { createResponse } from "@/helpers/createResponce";
-import { createClient } from "@/utils/supabase/server";
-import { revalidatePath } from "next/cache";
+import { loginData, signupData } from "@/schemas/form-schema"
+import { createResponse } from "@/helpers/createResponce"
+import { createClient } from "@/utils/supabase/server"
+import { revalidatePath } from "next/cache"
 
 // can do i think but i think use can pass zod errors
 export async function signupUser(values: signupData) {
-
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signUp({
     email: values.email,
@@ -21,43 +20,43 @@ export async function signupUser(values: signupData) {
       },
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/authconfirm`,
     },
-  });
+  })
 
-  // handle responce  
+  // handle responce
   if (error) {
     return createResponse("error", error.message)
-
   } else if (data.user?.identities?.length === 0) {
-    return createResponse("error", "User with this email already exists, please log in.");
+    return createResponse("error", "User with this email already exists, please log in.")
   } else {
-    revalidatePath("/", "layout");
-    return createResponse("success", "Signup successful! Check your email to confirm your account.", data.user)
+    revalidatePath("/", "layout")
+    return createResponse(
+      "success",
+      "Signup successful! Check your email to confirm your account.",
+      data.user
+    )
   }
-
 }
 
-
-// can do client side for this 
+// can do client side for this
 export async function signinUser(values: loginData) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email: values.email,
     password: values.password,
-  });
+  })
 
   if (error) {
-    return createResponse("error", error.message);
+    return createResponse("error", error.message)
   } else if (!data.user) {
-    return createResponse("error", "User not found or email not confirmed.");
+    return createResponse("error", "User not found or email not confirmed.")
   } else {
-
     // Check if profile exists
     const { data: existinguser } = await supabase
       .from("profile")
       .select("*")
       .eq("user_id", data.user.id)
-      .single();
+      .single()
 
     // If not, create profile using user_metadata from auth
     if (!existinguser) {
@@ -69,18 +68,16 @@ export async function signinUser(values: loginData) {
         lastname: meta.lastname,
       })
       if (error) {
-        return createResponse("error", error.message);
+        return createResponse("error", error.message)
       }
     }
 
-    return createResponse("success", "Signed in successfully!", data.user);
+    return createResponse("success", "Signed in successfully!", data.user)
   }
 }
 
-
 export async function signoutUser() {
-
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const { error } = await supabase.auth.signOut()
 
@@ -92,17 +89,17 @@ export async function signoutUser() {
 }
 
 export async function getUserProfile() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // Get current user
-  const { data: userData, error: userError } = await supabase.auth.getUser();
+  const { data: userData, error: userError } = await supabase.auth.getUser()
 
   if (userError) {
-    return createResponse("error", userError.message);
+    return createResponse("error", userError.message)
   }
 
   if (!userData.user) {
-    return createResponse("error", "User not authenticated");
+    return createResponse("error", "User not authenticated")
   }
 
   // Get user profile
@@ -110,30 +107,18 @@ export async function getUserProfile() {
     .from("profile")
     .select("*")
     .eq("user_id", userData.user.id)
-    .single();
+    .single()
 
   if (profileError) {
-    return createResponse("error", profileError.message);
+    return createResponse("error", profileError.message)
   }
 
   if (!profileData) {
-    return createResponse("error", "Profile not found");
+    return createResponse("error", "Profile not found")
   }
 
   return createResponse("success", "Profile retrieved successfully", {
     user: userData.user,
-    profile: profileData
-  });
+    profile: profileData,
+  })
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,7 +1,7 @@
-import Login from "@/components/login-form";
-import { GalleryVerticalEnd } from "lucide-react";
-import React from "react";
-import Link from "next/link";
+import Login from "@/components/login-form"
+import { GalleryVerticalEnd } from "lucide-react"
+import React from "react"
+import Link from "next/link"
 
 const Login2 = () => {
   return (
@@ -16,7 +16,7 @@ const Login2 = () => {
         <Login />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login2;
+export default Login2

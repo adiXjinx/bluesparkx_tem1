@@ -1,0 +1,14 @@
+{
+  "semi": false,
+  "singleQuote": false,
+  "doubleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindConfig": "./tailwind.config.js",
+  "embeddedLanguageFormatting": "auto",
+  "extends": ["next", "next/core-web-vitals", "prettier"]
+}

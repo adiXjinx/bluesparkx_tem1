@@ -1,12 +1,12 @@
 // /utils/createResponse.ts
 
-type Status = "success" | "error" | "info" | "warning";
+type Status = "success" | "error" | "info" | "warning"
 type ResponseData<T = undefined> = {
-  status: Status;
-  message: string;
-  data?: T;
-  [key: string]: unknown; // allow additional info
-};
+  status: Status
+  message: string
+  data?: T
+  [key: string]: unknown // allow additional info
+}
 
 export function createResponse<T = undefined>(
   status: Status,
@@ -19,5 +19,5 @@ export function createResponse<T = undefined>(
     message,
     ...(data !== undefined && { data }),
     ...extra,
-  };
+  }
 }
