@@ -10,7 +10,7 @@ interface Profile {
 
 export default async function PrivatePage() {
   const result = await getUserProfile();
-
+  
   // Handle response directly since we can't use hooks in async functions
   if (result.status === "error") {
     return ErrorComponent({ message: result.message });
