@@ -37,22 +37,26 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // const pathname = request.nextUrl.pathname
+  const pathname = request.nextUrl.pathname
 
-  if (!user && !request.nextUrl.pathname.startsWith("/auth")) {
+  if (
+    !user &&
+    !request.nextUrl.pathname.startsWith("/auth") &&
+    !request.nextUrl.pathname.startsWith("/error")
+  ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
     url.pathname = "/auth/login"
     return NextResponse.redirect(url)
   }
 
-  // ! Redirect **authenticated** users trying to access auth pages:
-
-  // if (user && (pathname === "/auth/login" || pathname === "/auth/signup")) {
-  //   const url = request.nextUrl.clone()
-  //   url.pathname = "/" // or wherever you want to send logged-in users
-  //   return NextResponse.redirect(url)
-  // }
+  // ! Redirect **authenticated** users trying to access auth pages: we can check this logic in layout file too 
+  // todo if you want to you can add starts with logic hear
+  if (user && (pathname === "/auth/login" || pathname === "/auth/signup")) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/" // or wherever you want to send logged-in users
+    return NextResponse.redirect(url)
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
