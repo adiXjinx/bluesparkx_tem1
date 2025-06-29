@@ -16,12 +16,12 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { signinUser } from "@/actions/supabaseUser_action"
 import { useResponseHandler } from "../helpers/useResponseHandler"
-import { UserModel, userModel } from "@/schemas/user_schema"
+import { LoginModel, loginModel } from "@/schemas/user_schema"
 
 const Login = () => {
   // define form
-  const form = useForm<UserModel>({
-    resolver: zodResolver(userModel),
+  const form = useForm<LoginModel>({
+    resolver: zodResolver(loginModel),
     defaultValues: {
       email: "",
       password: "",
@@ -33,7 +33,7 @@ const Login = () => {
   const router = useRouter()
   const handleResponse = useResponseHandler()
 
-  const onsubbmit = async (values: UserModel) => {
+  const onsubbmit = async (values: LoginModel) => {
     setLoading(true)
     const result = await signinUser(values)
     handleResponse(result)

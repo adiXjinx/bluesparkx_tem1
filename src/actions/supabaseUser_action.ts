@@ -1,6 +1,6 @@
 "use server"
 
-import { UserModel } from "@/schemas/user_schema"
+import { LoginModel, UpdateProfileModel, UserModel } from "@/schemas/user_schema"
 import { createResponse } from "@/helpers/createResponce"
 import { createClient } from "@/utils/supabase/server"
 import { revalidatePath } from "next/cache"
@@ -38,7 +38,7 @@ export async function signupUser(values: UserModel) {
   }
 }
 
-export async function signinUser(values: UserModel) {
+export async function signinUser(values: LoginModel) {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -125,7 +125,7 @@ export async function getUserProfile() {
   })
 }
 
-export async function updateProfile(values: UserModel) {
+export async function updateUserProfile(values: UpdateProfileModel) {
   const supabase = await createClient()
 
   // Get current user

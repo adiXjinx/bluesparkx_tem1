@@ -1,6 +1,8 @@
+
 import { getUserProfile } from "@/actions/supabaseUser_action"
 import { User } from "@supabase/supabase-js"
 import { ErrorComponent } from "@/components/error-component"
+import UpdateProfileComponent from "@/components/updateProfile_component"
 
 interface Profile {
   firstname: string
@@ -19,7 +21,7 @@ export default async function PrivatePage() {
   const { user, profile } = result.data as { user: User; profile: Profile }
 
   return (
-    <>
+    < div className="flex flex-col gap-6 justify-center text-center">
       <div className="container mx-auto">
         <h1 className="text-2xl font-bold">Hello {user.email}</h1>
         <p className="text-muted-foreground text-sm">Your ID: {user.id}</p>
@@ -30,6 +32,9 @@ export default async function PrivatePage() {
         <p>Last Name: {profile.lastname}</p>
         <p>Username: {profile.username}</p>
       </div>
-    </>
+      <div >
+        <UpdateProfileComponent profile={profile} user={user} />
+        </div>
+    </ div>
   )
 }
