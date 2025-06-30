@@ -91,8 +91,6 @@ export async function signoutUser() {
   }
 }
 
-
-
 export async function forgotPassword(values: FormData) {
   const supabase = await createClient()
   const origin = (await headers()).get("origin")
@@ -108,12 +106,10 @@ export async function forgotPassword(values: FormData) {
   }
 }
 
-
 export async function resetPassword(values: FormData, code: string) {
-
   const supabase = await createClient()
   const { error: codeError } = await supabase.auth.exchangeCodeForSession(code)
-  
+
   if (codeError) {
     return createResponse("error", codeError.message)
   }
@@ -122,13 +118,12 @@ export async function resetPassword(values: FormData, code: string) {
     password: values.get("password") as string,
   })
 
-  if (error) {resetPassword
+  if (error) {
     return createResponse("error", error.message)
   } else {
     return createResponse("success", "Password reset successfully")
   }
 }
-
 
 // sign in with Authproviders
 

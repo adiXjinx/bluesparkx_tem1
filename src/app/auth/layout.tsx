@@ -6,7 +6,6 @@ export default async function AuthLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-
   // ! if we want we can use middlewhare logic hear
   const result = await getUser()
 

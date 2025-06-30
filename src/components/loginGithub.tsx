@@ -1,7 +1,6 @@
 "use client"
 import { Button } from "./ui/button"
 import React, { useTransition } from "react"
-import { FaGithub } from "react-icons/fa"
 import { signinWithAuth } from "@/actions/supabaseUser_action"
 
 const LoginGithub = () => {
@@ -16,18 +15,18 @@ const LoginGithub = () => {
   return (
     <Button onClick={handleGithubLogin} disabled={isPending} variant="outline" className="w-full">
       <svg
-    viewBox="0 0 128 128"
-    xmlns="http://www.w3.org/2000/svg"
-    role="img"
-    aria-label="GitHub icon"
-  >
-    <g id="Social_Icons">
-      <g id="_x31__stroke">
-        <g id="Github_1_">
-          <rect fill="none" height="128" width="128" />
-          <path
-            fill="#3E75C3"
-            d="M63.996,1.333C28.656,1.333,0,30.099,0,65.591
+        viewBox="0 0 128 128"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="GitHub icon"
+      >
+        <g id="Social_Icons">
+          <g id="_x31__stroke">
+            <g id="Github_1_">
+              <rect fill="none" height="128" width="128" />
+              <path
+                fill="#3E75C3"
+                d="M63.996,1.333C28.656,1.333,0,30.099,0,65.591
               c0,28.384,18.336,52.467,43.772,60.965c3.2,0.59,4.368-1.394,4.368-3.096
               c0-1.526-0.056-5.566-0.088-10.927c-17.804,3.883-21.56-8.614-21.56-8.614
               c-2.908-7.421-7.104-9.397-7.104-9.397c-5.812-3.988,0.44-3.907,0.44-3.907
@@ -40,11 +39,11 @@ const LoginGithub = () => {
               c0,24.681-14.964,30.115-29.22,31.705c2.296,1.984,4.344,5.903,4.344,11.899
               c0,8.59-0.08,15.517-0.08,17.626c0,1.719,1.152,3.719,4.4,3.088
               C109.68,118.034,128,93.967,128,65.591C128,30.099,99.344,1.333,63.996,1.333"
-          />
+              />
+            </g>
+          </g>
         </g>
-      </g>
-    </g>
-  </svg>
+      </svg>
       {isPending ? "Redirecting..." : "Login with Github"}
     </Button>
   )
