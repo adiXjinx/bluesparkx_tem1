@@ -91,6 +91,45 @@ export async function signoutUser() {
   }
 }
 
+
+
+export async function forgotPassword(values: FormData) {
+  const supabase = await createClient()
+  const origin = (await headers()).get("origin")
+
+  const { error } = await supabase.auth.resetPasswordForEmail(values.get("email") as string, {
+    redirectTo: `${origin}/auth/reset-password`,
+  })
+
+  if (error) {
+    return createResponse("error", error.message)
+  } else {
+    return createResponse("success", "Password reset email sent")
+  }
+}
+
+
+export async function resetPassword(values: FormData, code: string) {
+
+  const supabase = await createClient()
+  const { error: codeError } = await supabase.auth.exchangeCodeForSession(code)
+  
+  if (codeError) {
+    return createResponse("error", codeError.message)
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    password: values.get("password") as string,
+  })
+
+  if (error) {resetPassword
+    return createResponse("error", error.message)
+  } else {
+    return createResponse("success", "Password reset successfully")
+  }
+}
+
+
 // sign in with Authproviders
 
 export async function signinWithAuth(provider: "google" | "github") {

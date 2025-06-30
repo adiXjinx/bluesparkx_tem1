@@ -102,6 +102,7 @@ const Login = () => {
                           </FormItem>
                         )}
                       />
+                      
                     </div>
                     <button
                       type="submit"
@@ -137,12 +138,20 @@ const Login = () => {
                       )}
                     </button>
                   </div>
-                  <div className="text-center text-sm">
+                  <div className="flex flex-col gap-2">
+                  <div className="text-sm">
                     Don&apos;t have an account?{" "}
                     <Link href="/auth/signup" className="underline underline-offset-4">
                       Sign up
                     </Link>
                   </div>
+                  <div className=" text-sm">
+                        Don&apos;t remember your password?{" "}
+                        <Link href="/auth/forgot-password" className="underline underline-offset-4">
+                          Reset password
+                        </Link>
+                    </div>
+                    </div>
                 </div>
               </CardContent>
             </Card>
