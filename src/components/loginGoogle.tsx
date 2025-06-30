@@ -1,0 +1,41 @@
+"use client"
+import { Button } from "./ui/button"
+import React, { useTransition } from "react"
+import { FaGoogle } from "react-icons/fa"
+import { signinWithAuth } from "@/actions/supabaseUser_action"
+
+const LoginGoogle = () => {
+  const [isPending, startTransition] = useTransition()
+
+  const handleGoogleLogin = () => {
+    startTransition(async () => {
+      await signinWithAuth("google")
+    })
+  }
+
+  return (
+    // ! its off for now
+    <Button onClick={handleGoogleLogin} disabled={true} variant="outline" className="w-full">
+     <svg
+    viewBox="0 0 512 512"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Google Icon"
+  >
+    <path
+      fill="#1D87F8"
+      d="M491.4,210.1c-76.8,0-153.6,0-230.5,0c0,31.9,0,63.7,0,95.6c44.5,0,89,0,133.5,0
+      c-5.2,30.5-23.3,58.5-49,75.6c-16.2,10.9-34.8,17.9-53.9,21.3c-19.3,3.3-39.2,3.7-58.4-0.2c-19.6-3.9-38.2-12.1-54.5-23.5
+      c-26-18.3-45.9-45.1-56.1-75.2c-10.4-30.6-10.5-64.8,0-95.4c7.3-21.6,19.5-41.5,35.5-57.7c19.8-20.2,45.5-34.7,73.1-40.6
+      c23.7-5.1,48.7-4.1,71.9,2.9c19.7,6,37.9,16.8,52.8,31c15.1-15,30-30,45.1-45c7.9-8.1,16.2-15.8,23.8-24.1
+      c-22.8-21.1-49.6-38.1-78.8-48.8c-52.6-19.4-112-19.8-165-1.4C121.1,45,70.3,89.6,42.1,146.1c-9.8,19.4-17,40.2-21.3,61.6
+      C10,260.8,17.5,317.5,42.1,366c15.9,31.6,38.8,59.7,66.5,81.8c26.2,20.9,56.7,36.3,89,44.9c40.8,10.9,84.2,10.7,125.3,1.3
+      c37.1-8.5,72.2-26.3,100.3-52.2c29.6-27.2,50.8-63.1,62-101.7C497.3,298.1,499,253.2,491.4,210.1z"
+    />
+  </svg>
+      {isPending ? "Redirecting..." : "Login with Google"}
+    </Button>
+  )
+}
+
+export default LoginGoogle
