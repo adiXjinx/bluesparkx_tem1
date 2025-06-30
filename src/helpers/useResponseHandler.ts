@@ -20,7 +20,7 @@ export function useResponseHandler(options: ResponseHandlerOptions = {}) {
     showError = true,
     showInfo = true,
     showWarning = true,
-    errorUI = false,
+    errorUI = true,
   } = options
 
   return function handleResponse(res: Response): Response | ReactNode {

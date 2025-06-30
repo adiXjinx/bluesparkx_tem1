@@ -50,7 +50,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // ! Redirect **authenticated** users trying to access auth pages: we can check this logic in layout file too 
+  // ! Redirect **authenticated** users trying to access auth pages: we can check this logic in layout file too
   // todo if you want to you can add starts with logic hear
   if (user && (pathname === "/auth/login" || pathname === "/auth/signup")) {
     const url = request.nextUrl.clone()
