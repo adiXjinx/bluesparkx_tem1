@@ -138,6 +138,8 @@ export async function signinWithAuth(provider: "google" | "github") {
     },
   })
 
+  console.log(data)
+
   // todo use custom error comp
   if (error) {
     redirect("/error")

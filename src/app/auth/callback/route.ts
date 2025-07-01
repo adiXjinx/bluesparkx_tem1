@@ -26,7 +26,8 @@ export async function GET(request: Request) {
       }
 
       // ! check user profile if not create it
-
+      const user = data.user
+      const metadata = user.user_metadata
       // Check if profile exists
       const { data: existinguser } = await supabase
         .from("profile")
@@ -36,15 +37,26 @@ export async function GET(request: Request) {
 
       // If not, create profile using user_metadata from auth
       if (!existinguser) {
+        const username =
+          metadata.user_name ||
+          metadata.name.toLowerCase().replace(" ", "") ||
+          metadata.full_name.toLowerCase().replace(" ", "") ||
+          metadata.email?.split("@")[0]
+        const firstname = metadata.first_name || metadata.full_name?.split(" ")[0] || ""
+        const lastname = metadata.last_name || metadata.full_name?.split(" ")[1] || ""
+
         const { error: cUserprofileError } = await supabase.from("profile").insert({
-          email: data.user.email,
-          username: data.user.user_metadata.user_name,
-          firstname: data.user.user_metadata.first_name || "",
-          lastname: data.user.user_metadata.last_name || "",
+          user_id: user.id,
+          email: user.email,
+          username: username,
+          firstname: firstname,
+          lastname: lastname,
           // todo if user don't have f and l name send them to update there name
+          // ! we are not doing if username exists, in signup or in auth
         })
+
         if (cUserprofileError) {
-          console.error("error creating user profile", cUserprofileError.message)
+          await new Promise((resolve) => setTimeout(resolve, 1000))
           return NextResponse.redirect(`${origin}/error`)
         }
       }
