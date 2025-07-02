@@ -13,7 +13,7 @@ const LoginGithub = () => {
   }
 
   return (
-    <Button onClick={handleGithubLogin} disabled={isPending} variant="outline" className="w-full">
+    <Button onClick={handleGithubLogin} disabled={isPending} type="button" variant="outline" className="w-full">
       <svg
         viewBox="0 0 128 128"
         xmlns="http://www.w3.org/2000/svg"
