@@ -90,6 +90,8 @@ export const updateProfileModel = z.object({
   fname: z.string(),
 
   lname: z.string(),
+
+  avatar_url: z.string().nullable().optional(),
 })
 
 export type UpdateProfileModel = z.infer<typeof updateProfileModel>

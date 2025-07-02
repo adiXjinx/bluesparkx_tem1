@@ -2,11 +2,14 @@ import { getUserProfile } from "@/actions/supabaseUser_action"
 import { User } from "@supabase/supabase-js"
 import { ErrorComponent } from "@/components/error-component"
 import UpdateProfileComponent from "@/components/updateProfile_component"
+import Avatar from "@mui/material/Avatar"
 
 interface Profile {
   firstname: string
   lastname: string
   username: string
+  avatar_url?: string
+  profile_picture?: string
 }
 
 export default async function PrivatePage() {
@@ -30,6 +33,9 @@ export default async function PrivatePage() {
         <p>First Name: {profile.firstname}</p>
         <p>Last Name: {profile.lastname}</p>
         <p>Username: {profile.username}</p>
+        <div className="flex justify-center">
+          <Avatar src={profile.avatar_url} sx={{ width: 50, height: 50 }} />
+        </div>
       </div>
       <div>
         <UpdateProfileComponent profile={profile} />
