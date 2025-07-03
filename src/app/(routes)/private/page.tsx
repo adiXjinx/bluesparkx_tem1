@@ -3,6 +3,7 @@ import { User } from "@supabase/supabase-js"
 import { ErrorComponent } from "@/components/error-component"
 import UpdateProfileComponent from "@/components/updateProfile_component"
 import Avatar from "@mui/material/Avatar"
+import DeleteUserComp from "@/components/deleteuser-com"
 
 interface Profile {
   firstname: string
@@ -39,6 +40,9 @@ export default async function PrivatePage() {
       </div>
       <div>
         <UpdateProfileComponent profile={profile} />
+      </div>
+      <div className="flex justify-center">
+        <DeleteUserComp />
       </div>
     </div>
   )

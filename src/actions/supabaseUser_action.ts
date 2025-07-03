@@ -7,12 +7,24 @@ import { dataURLtoFile } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { supabaseAdminClient } from "@/utils/supabase/adminclient"
 
 // ! Authendication
 
 export async function signupUser(values: UserModel) {
   const origin = (await headers()).get("origin")
   const supabase = await createClient()
+
+  //check for unique username
+  const { data: existinguser } = await supabase
+    .from("profile")
+    .select("*")
+    .eq("username", values.username)
+    .single()
+
+  if (existinguser) {
+    return createResponse("error", "Username already exists")
+  }
 
   const { data, error } = await supabase.auth.signUp({
     email: values.email,
@@ -140,7 +152,7 @@ export async function signinWithAuth(provider: "google" | "github") {
   })
 
   if (error) {
-    redirect("/error?code=500")
+    redirect(`/error?code=500&msg=${error.message}`)
   } else {
     redirect(data.url)
   }
@@ -252,7 +264,9 @@ export async function updateUserProfile(values: Partial<UpdateProfileModel>) {
 
   const { error } = await supabase.from("profile").update(updateObj).eq("user_id", userData.user.id)
 
-  if (error) {
+  if (error?.message === 'duplicate key value violates unique constraint "User_username_key"') {
+    return createResponse("error", "Username already exists")
+  } else if (error) {
     return createResponse("error", error.message)
   }
 
@@ -277,31 +291,37 @@ export async function getUser() {
 
 export async function deleteUser() {
   const supabase = await createClient()
+  const supabaseAdmin = await supabaseAdminClient()
 
   // Get current user
   const { data: userData, error: userError } = await supabase.auth.getUser()
 
-  if (userError) {
-    return createResponse("error", userError.message)
+  if (userError || !userData.user) {
+    return createResponse("error", userError?.message || "User not authenticated")
   }
 
-  if (!userData.user) {
-    return createResponse("error", "User not authenticated")
+  const userId = userData.user.id
+
+  const { error: deleteError } = await supabase.storage
+    .from("profile-picture")
+    .remove([`${userId}/avatar.jpg`])
+
+  if (deleteError) {
+    return createResponse("error", "Failed to delete profile picture")
   }
 
-  // Delete user profile
-  const { error } = await supabase.from("profile").delete().eq("user_id", userData.user.id)
+  const { error: profileError } = await supabase.from("profile").delete().eq("user_id", userId)
 
-  if (error) {
-    return createResponse("error", error.message)
+  if (profileError) {
+    return createResponse("error", profileError.message)
   }
 
-  // Delete user
-  const { error: authError } = await supabase.auth.admin.deleteUser(userData.user.id)
+  const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
   if (authError) {
     return createResponse("error", authError.message)
   }
 
+  revalidatePath("/", "layout")
   return createResponse("success", "User deleted successfully")
 }
