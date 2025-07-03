@@ -139,9 +139,9 @@ export async function signinWithAuth(provider: "google" | "github") {
     },
   })
 
-  // todo use custom error comp
+  
   if (error) {
-    redirect("/error")
+    redirect("/error?code=500")
   } else {
     redirect(data.url)
   }

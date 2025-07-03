@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
       if (userError) {
         console.error("Error fetching user data", userError.message)
-        return NextResponse.redirect(`${origin}/error`)
+        return NextResponse.redirect(`${origin}/error?code=500`)
       }
 
       // ! check user profile if not create it
@@ -61,7 +61,7 @@ export async function GET(request: Request) {
 
         if (cUserprofileError) {
           await new Promise((resolve) => setTimeout(resolve, 1000))
-          return NextResponse.redirect(`${origin}/error`)
+          return NextResponse.redirect(`${origin}/error?code=500`)
         }
       }
 
@@ -79,5 +79,5 @@ export async function GET(request: Request) {
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+  return NextResponse.redirect(`${origin}/error?code=500`)
 }

@@ -1,12 +1,16 @@
-interface ErrorComponentProps {
+type ErrorComponentProps = {
   message: string
+  icon?: string
+  className?: string
 }
 
-export function ErrorComponent({ message }: ErrorComponentProps) {
+export function ErrorComponent({ message, icon = "⚠️", className = "" }: ErrorComponentProps) {
   return (
-    <div className="container mx-auto">
-      <h1 className="text-2xl font-bold text-red-600">Error</h1>
-      <p className="text-muted-foreground text-sm">{message}</p>
+    <div
+      className={`flex items-center gap-2 rounded bg-red-100 p-2 text-sm text-red-600 ${className}`}
+    >
+      <span>{icon}</span>
+      <span>{message}</span>
     </div>
   )
 }
