@@ -139,8 +139,6 @@ export async function signinWithAuth(provider: "google" | "github") {
     },
   })
 
-  console.log(data)
-
   // todo use custom error comp
   if (error) {
     redirect("/error")
@@ -204,30 +202,23 @@ export async function updateUserProfile(values: Partial<UpdateProfileModel>) {
 
   // Handle profile picture removal (null value)
   if (values.avatar_url === null) {
-    console.log("Removing profile picture")
-    try {
-      const { error: deleteError } = await supabase.storage
-        .from("profile-picture")
-        .remove([`${userData.user.id}/avatar.jpg`])
+    const { error: deleteError } = await supabase.storage
+      .from("profile-picture")
+      .remove([`${userData.user.id}/avatar.jpg`])
 
-      if (deleteError) {
-        console.warn("Failed to delete old profile picture:", deleteError)
-      } else {
-        console.log("Old profile picture deleted from storage")
-      }
-    } catch (error) {
-      console.warn("Error deleting old profile picture:", error)
+    if (deleteError) {
+      return createResponse("error", "Failed to delete old profile picture")
     }
-  }
-  // Handle profile picture upload if it's a data URL
-  else if (values.avatar_url && values.avatar_url.startsWith("data:image/")) {
+
+    // Handle profile picture upload if it's a data URL
+  } else if (values.avatar_url && values.avatar_url.startsWith("data:image/")) {
     try {
       const file = await dataURLtoFile(values.avatar_url, `avatar.jpg`)
-      console.log("File created:", file.name, "Size:", file.size)
 
       const filePath = `${userData.user.id}/avatar.jpg`
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      // upload file to supabase storage
+      const { error: uploadError } = await supabase.storage
         .from("profile-picture")
         .upload(filePath, file, {
           cacheControl: "3600",
@@ -235,11 +226,8 @@ export async function updateUserProfile(values: Partial<UpdateProfileModel>) {
         })
 
       if (uploadError) {
-        console.error("Upload error:", uploadError)
         return createResponse("error", `Failed to upload image: ${uploadError.message}`)
       }
-
-      console.log("Upload successful:", uploadData)
 
       // Get public URL and bust cache
       const { data: urlData } = supabase.storage.from("profile-picture").getPublicUrl(filePath)
@@ -247,10 +235,7 @@ export async function updateUserProfile(values: Partial<UpdateProfileModel>) {
       // ✅ Bust cache by appending timestamp
       const timestamp = Date.now()
       finalProfilePictureUrl = `${urlData.publicUrl}?v=${timestamp}`
-
-      console.log("Final URL:", finalProfilePictureUrl)
     } catch (error) {
-      console.error("Error processing image:", error)
       return createResponse("error", `Failed to process image: ${error}`)
     }
   }
@@ -262,8 +247,6 @@ export async function updateUserProfile(values: Partial<UpdateProfileModel>) {
   if (values.lname !== undefined) updateObj.lastname = values.lname!
   if (values.avatar_url !== undefined) updateObj.avatar_url = finalProfilePictureUrl ?? null
 
-  console.log("Update object:", updateObj)
-
   if (Object.keys(updateObj).length === 0) {
     return createResponse("error", "No fields to update")
   }
@@ -271,11 +254,9 @@ export async function updateUserProfile(values: Partial<UpdateProfileModel>) {
   const { error } = await supabase.from("profile").update(updateObj).eq("user_id", userData.user.id)
 
   if (error) {
-    console.error("Database update error:", error)
     return createResponse("error", error.message)
   }
 
-  console.log("Profile updated successfully")
   return createResponse("success", "Profile updated successfully")
 }
 

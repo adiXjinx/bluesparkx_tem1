@@ -68,9 +68,15 @@ export default function UpdateProfileComponent({ profile }: { profile: Profile }
 
     // Build changed fields object
     const changedFields: Partial<UpdateProfileModel> = {}
-    if (values.fname !== originalValues.fname) changedFields.fname = values.fname
-    if (values.lname !== originalValues.lname) changedFields.lname = values.lname
-    if (values.username !== originalValues.username) changedFields.username = values.username
+    if (values.fname !== originalValues.fname) {
+      changedFields.fname = values.fname
+    }
+    if (values.lname !== originalValues.lname) {
+      changedFields.lname = values.lname
+    }
+    if (values.username !== originalValues.username) {
+      changedFields.username = values.username
+    }
     if (profilePicUrl !== originalValues.avatar_url) {
       // Send null if removed, otherwise send the string value
       changedFields.avatar_url = profilePicUrl ?? null
