@@ -15,17 +15,17 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
+    console.log(error)
     if (!error) {
       // ! our custom logic
       const { data, error: userError } = await supabase.auth.getUser()
-      // todo create error page with error message prop and use it hear
+      console.log(data)
+      console.log(userError)
 
       if (userError) {
         console.error("Error fetching user data", userError.message)
-        return NextResponse.redirect(`${origin}/error?code=500`)
+        return NextResponse.redirect(`${origin}/error?code=500&msg=${userError.message}`)
       }
-
-      // ! check user profile if not create it
 
       // Check if profile exists
       const { data: existinguser } = await supabase
@@ -34,34 +34,78 @@ export async function GET(request: Request) {
         .eq("user_id", data.user.id)
         .single()
 
-      // If not, create profile using user_metadata from auth
       if (!existinguser) {
         const user = data.user
         const metadata = user.user_metadata
 
-        const username =
+        // Generate base username
+        const baseUsername =
           metadata.user_name ||
-          metadata.name.toLowerCase().replace(" ", "") ||
-          metadata.full_name.toLowerCase().replace(" ", "") ||
-          metadata.email?.split("@")[0]
+          metadata.name?.toLowerCase().replace(/\s+/g, "") ||
+          metadata.full_name?.toLowerCase().replace(/\s+/g, "") ||
+          metadata.email?.split("@")[0] ||
+          "user"
+
+        // Check for uniqueness
+        let uniqueUsername = baseUsername
+        let counter = 1
+
+        while (true) {
+          const { data: usernameCheck } = await supabase
+            .from("profile")
+            .select("id")
+            .eq("username", uniqueUsername)
+            .maybeSingle()
+
+          if (!usernameCheck) break // username is unique
+
+          uniqueUsername = `${baseUsername}_${counter}`
+          if (counter === 5) {
+            console.error("Failed to create user profile", "Username already exists")
+            return NextResponse.redirect(`${origin}/error?code=500&msg=Username already exists`)
+          }
+          counter++
+        }
+
         const firstname = metadata.first_name || metadata.full_name?.split(" ")[0] || ""
         const lastname = metadata.last_name || metadata.full_name?.split(" ")[1] || ""
         const avatar_url = metadata.avatar_url || ""
 
-        const { error: cUserprofileError } = await supabase.from("profile").insert({
-          user_id: user.id,
-          email: user.email,
-          username: username,
-          firstname: firstname,
-          lastname: lastname,
-          avatar_url: avatar_url,
-          // todo if user don't have f and l name send them to update there name
-          // ! we are not doing if username exists, in signup or in auth
-        })
+        let insertError = null
+        let finalUsername = uniqueUsername
 
-        if (cUserprofileError) {
+        for (let attempt = 0; attempt < 5; attempt++) {
+          const { error: cUserprofileError } = await supabase.from("profile").insert({
+            user_id: user.id,
+            email: user.email,
+            username: finalUsername,
+            firstname,
+            lastname,
+            avatar_url,
+          })
+
+          if (!cUserprofileError) {
+            // success
+            insertError = null
+            break
+          }
+
+          if (cUserprofileError.code === "23505") {
+            // duplicate username, retry with incremented suffix
+            finalUsername = `${baseUsername}_${counter++}`
+            insertError = cUserprofileError
+            continue
+          } else {
+            // another kind of insert error
+            insertError = cUserprofileError
+            break
+          }
+        }
+
+        if (insertError) {
+          console.error("Failed to create user profile", insertError.message)
           await new Promise((resolve) => setTimeout(resolve, 1000))
-          return NextResponse.redirect(`${origin}/error?code=500`)
+          return NextResponse.redirect(`${origin}/error?code=500&msg=${insertError.message}`)
         }
       }
 
