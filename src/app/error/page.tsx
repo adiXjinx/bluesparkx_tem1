@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 
 const emojiMap: Record<string, string> = {
@@ -18,15 +19,12 @@ const defaultMessageMap: Record<string, string> = {
   "503": "Taking a coffee break. Try again later ☕",
 }
 
-// 💡 Default fallback message if no query provided at all
 const playfulFallback = "Trying to sneak into the error lounge? Cute, but no chaos here."
 
-export default function ErrorPage() {
+function ErrorUI() {
   const searchParams = useSearchParams()
   const code = searchParams.get("code") || ""
   const emoji = emojiMap[code] || "⚠️"
-
-  // if custom ?msg is passed, use that, else fallback to code-based humor, else fallback default
   const message = searchParams.get("msg") || defaultMessageMap[code] || playfulFallback
 
   return (
@@ -35,5 +33,13 @@ export default function ErrorPage() {
       <h2 className="mt-2 text-2xl font-semibold">{code ? `Error ${code}` : "No Error... Yet."}</h2>
       <p className="mt-2 max-w-md text-lg text-gray-700">{message}</p>
     </div>
+  )
+}
+
+export default function ErrorPage() {
+  return (
+    <Suspense>
+      <ErrorUI />
+    </Suspense>
   )
 }

@@ -139,7 +139,6 @@ export async function signinWithAuth(provider: "google" | "github") {
     },
   })
 
-  
   if (error) {
     redirect("/error?code=500")
   } else {
