@@ -1,30 +1,42 @@
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./ui/mode-toggle"
-import { createClient } from "@/utils/supabase/server"
+import { createClient } from "@/utils/supabase/client"
 import Signout from "./sign-out"
 import Avatar from "@mui/material/Avatar"
+import { useEffect, useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { User } from "@supabase/supabase-js"
 
-export default async function Header() {
-  const supabase = await createClient()
+export default function Header() {
+  const supabase = createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  useEffect(async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-  const { data: profile } = await supabase
-    .from("profile")
-    .select("*")
-    .eq("user_id", user?.id)
-    .single()
-  
+    const { data: profile } = await supabase
+      .from("profile")
+      .select("*")
+      .eq("user_id", user?.id)
+      .single()
+
+    setUser(user)
+    setProfile(profile)
+  }, [])
+
+  const [user, setUser] = useState<User | null>(null)
+  const [profile, setProfile] = useState<any | null>(null)
+
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   return (
     <header className="glass vercel-shadow border-border bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
         {/* Left: Logo + Nav */}
         <div className="flex items-center gap-6 sm:gap-8">
-
           <Link
             href="/"
             className="transition-smooth flex items-center gap-2 text-lg font-semibold tracking-tight hover:opacity-80"
@@ -79,7 +91,18 @@ export default async function Header() {
             <>
               <span className="text-muted-foreground text-sm font-medium">{user.email}</span>
               <Signout />
-              <Avatar src={profile?.avatar_url} sx={{ width: 35, height: 35 }} />
+              <Avatar
+                src={profile?.avatar_url}
+                sx={{ width: 35, height: 35 }}
+                onClick={() => setDialogOpen(true)}
+              />
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Profile</DialogTitle>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
             </>
           )}
         </div>
