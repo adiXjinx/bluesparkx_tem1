@@ -26,6 +26,8 @@ export async function signupUser(values: UserModel) {
     return createResponse("error", "Username already exists")
   }
 
+  
+
   const { data, error } = await supabase.auth.signUp({
     email: values.email,
     password: values.password,
@@ -39,7 +41,7 @@ export async function signupUser(values: UserModel) {
     },
   })
 
-  // handle responce
+  // handle responce and check for existing email
   if (error) {
     return createResponse("error", error.message)
   } else if (data.user?.identities?.length === 0) {

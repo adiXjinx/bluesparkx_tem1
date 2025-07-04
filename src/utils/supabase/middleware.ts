@@ -42,7 +42,8 @@ export async function updateSession(request: NextRequest) {
   if (
     !user &&
     !request.nextUrl.pathname.startsWith("/auth") &&
-    !request.nextUrl.pathname.startsWith("/error")
+    !request.nextUrl.pathname.startsWith("/error") &&
+    request.nextUrl.pathname !== "/"
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
@@ -54,7 +55,7 @@ export async function updateSession(request: NextRequest) {
   // todo if you want to you can add starts with logic hear
   if (user && (pathname === "/auth/login" || pathname === "/auth/signup")) {
     const url = request.nextUrl.clone()
-    url.pathname = "/" // or wherever you want to send logged-in users
+    url.pathname = "/" 
     return NextResponse.redirect(url)
   }
 
