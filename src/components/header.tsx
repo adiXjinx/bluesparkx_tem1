@@ -40,6 +40,9 @@ export default async function Header() {
             </svg>
             BlueSparkx
           </Link>
+          <Link href="/pricing"
+          className="text-muted-foreground hover:text-foreground transition-smooth text-sm"
+          >Pricing</Link>
 
           {user && (
             <>
