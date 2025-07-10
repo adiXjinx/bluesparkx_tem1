@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
-import { SupabaseClient, User } from '@supabase/supabase-js';
+import { useEffect, useState } from "react"
+import { SupabaseClient, User } from "@supabase/supabase-js"
 
 export function useUserInfo(supabase: SupabaseClient) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase.auth.getUser();
+    ;(async () => {
+      const { data } = await supabase.auth.getUser()
       if (data?.user) {
-        setUser(data.user);
+        setUser(data.user)
       }
-    })();
-  }, [supabase.auth]);
+    })()
+  }, [supabase.auth])
 
-  return { user };
+  return { user }
 }

@@ -22,11 +22,11 @@ interface Props {
 
 export function CheckoutLineItems({ checkoutData }: Props) {
   return (
-          <>
-        <div className={"text-base leading-[20px] font-medium md:pt-12"}>
-          {checkoutData?.items[0].price_name}
-        </div>
-        <Separator className={"bg-border/50 mt-6"} />
+    <>
+      <div className={"text-base leading-[20px] font-medium md:pt-12"}>
+        {checkoutData?.items[0].price_name}
+      </div>
+      <Separator className={"bg-border/50 mt-6"} />
       <div className={"flex justify-between pt-6"}>
         <span className={"text-muted-foreground text-base leading-[20px] font-medium"}>
           Subtotal

@@ -56,7 +56,7 @@ export async function updateSession(request: NextRequest) {
   // todo if you want to you can add starts with logic hear
   if (user && (pathname === "/auth/login" || pathname === "/auth/signup")) {
     const url = request.nextUrl.clone()
-    url.pathname = "/" 
+    url.pathname = "/"
     return NextResponse.redirect(url)
   }
 

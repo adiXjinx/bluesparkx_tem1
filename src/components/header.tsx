@@ -1,4 +1,3 @@
-
 import { CheckoutHeader } from "./checkout/checkout-header"
 import RealHeader from "./realheader"
 
@@ -8,6 +7,5 @@ interface Props {
 
 // ! for later bro
 export default function Header({ isCheckout = false }: Props) {
-   return isCheckout ? <CheckoutHeader /> : <RealHeader />
+  return isCheckout ? <CheckoutHeader /> : <RealHeader />
 }
-

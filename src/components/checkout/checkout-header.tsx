@@ -1,12 +1,15 @@
-import { Button } from '@/components/ui/button';
-import { ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button"
+import { ChevronLeft } from "lucide-react"
+import Link from "next/link"
 
 export function CheckoutHeader() {
   return (
     <div className={"flex gap-4"}>
       <Link href={"/"}>
-        <Button variant={"secondary"} className={"h-[25px] w-[25px] rounded-[4px] border-none ml-5 bg-[#0a247a] p-0"}>
+        <Button
+          variant={"secondary"}
+          className={"ml-5 h-[25px] w-[25px] rounded-[4px] border-none bg-[#0a247a] p-0"}
+        >
           <ChevronLeft />
         </Button>
       </Link>

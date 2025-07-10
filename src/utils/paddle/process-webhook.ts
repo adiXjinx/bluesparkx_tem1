@@ -6,7 +6,7 @@ import {
   SubscriptionCanceledEvent,
 } from "@paddle/paddle-node-sdk"
 import { createClient } from "@/utils/supabase/serverAdmin"
-import type { Subscription, Plan, Profile } from "@/lib/database.types"
+import type { Subscription } from "@/lib/database.types"
 
 export class ProcessWebhook {
   async processEvent(eventData: EventEntity) {

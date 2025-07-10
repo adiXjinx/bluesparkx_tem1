@@ -1,16 +1,19 @@
-
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import '../../../styles/checkout.css';
-import { createClient } from '@/utils/supabase/server';
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import "../../../styles/checkout.css"
+import { createClient } from "@/utils/supabase/server"
 
 export default async function SuccessPage() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
+  const supabase = await createClient()
+  const { data } = await supabase.auth.getUser()
 
   return (
     <main>
-      <div className={"relative h-screen overflow-hidden bg-gradient-to-b from-[#0f172a] to-[#143e83] px-4 text-white"}>
+      <div
+        className={
+          "relative h-screen overflow-hidden bg-gradient-to-b from-[#0f172a] to-[#143e83] px-4 text-white"
+        }
+      >
         <div className={"absolute inset-0 flex items-center justify-center px-6"}>
           <div className={"flex flex-col items-center text-center text-white"}>
             <div className="flex items-center gap-2">

@@ -6,7 +6,6 @@ import Signout from "./sign-out"
 import Avatar from "@mui/material/Avatar"
 
 export default async function RealHeader() {
-  
   const supabase = await createClient()
 
   const {

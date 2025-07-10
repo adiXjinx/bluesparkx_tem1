@@ -1,37 +1,42 @@
-import { CheckoutLineItems } from '@/components/checkout/checkout-line-items';
-import { CheckoutPriceContainer } from '@/components/checkout/checkout-price-container';
-import { CheckoutPriceAmount } from '@/components/checkout/checkout-price-amount';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Separator } from '@/components/ui/separator';
-import { CheckoutEventsData } from '@paddle/paddle-js/types/checkout/events';
+import { CheckoutLineItems } from "@/components/checkout/checkout-line-items"
+import { CheckoutPriceContainer } from "@/components/checkout/checkout-price-container"
+import { CheckoutPriceAmount } from "@/components/checkout/checkout-price-amount"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Separator } from "@/components/ui/separator"
+import { CheckoutEventsData } from "@paddle/paddle-js/types/checkout/events"
 
 interface Props {
-  checkoutData: CheckoutEventsData | null;
+  checkoutData: CheckoutEventsData | null
 }
 
 export function PriceSection({ checkoutData }: Props) {
   return (
     <>
-      <div className={'hidden md:block'}>
+      <div className={"hidden md:block"}>
         <CheckoutPriceContainer checkoutData={checkoutData} />
-        <CheckoutLineItems
-          checkoutData={checkoutData}
-        />
+        <CheckoutLineItems checkoutData={checkoutData} />
       </div>
-      <div className={'block md:hidden'}>
+      <div className={"block md:hidden"}>
         <CheckoutPriceAmount checkoutData={checkoutData} />
-        <Separator className={'relative bg-border/50 mt-6 checkout-order-summary-mobile-yellow-highlight'} />
+        <Separator
+          className={"bg-border/50 checkout-order-summary-mobile-yellow-highlight relative mt-6"}
+        />
         <Accordion type="single" collapsible>
-          <AccordionItem className={'border-none'} value="item-1">
-            <AccordionTrigger className={'text-muted-foreground no-underline!'}>Order summary</AccordionTrigger>
-            <AccordionContent className={'pb-0'}>
-              <CheckoutLineItems
-                checkoutData={checkoutData}
-              />
+          <AccordionItem className={"border-none"} value="item-1">
+            <AccordionTrigger className={"text-muted-foreground no-underline!"}>
+              Order summary
+            </AccordionTrigger>
+            <AccordionContent className={"pb-0"}>
+              <CheckoutLineItems checkoutData={checkoutData} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
     </>
-  );
+  )
 }

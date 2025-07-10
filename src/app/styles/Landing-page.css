@@ -6,16 +6,16 @@
 }
 
 .grid-bg {
-  background: url('/assets/background/grid-bg.svg') no-repeat;
+  background: url("/assets/background/grid-bg.svg") no-repeat;
 }
 
 .grain-background {
-  background: url('/assets/background/grain-bg.svg') repeat;
+  background: url("/assets/background/grain-bg.svg") repeat;
 }
 
 .grain-blur {
   top: -220px;
-  background: url('/assets/background/grain-blur.svg') no-repeat 50%;
+  background: url("/assets/background/grain-blur.svg") no-repeat 50%;
 }
 
 .large-blur {
@@ -32,7 +32,7 @@
 }
 
 .small-blur {
-  background: url('/assets/background/small-blur.svg') no-repeat 50%;
+  background: url("/assets/background/small-blur.svg") no-repeat 50%;
 }
 
 .featured-card-badge {
@@ -44,7 +44,7 @@
 }
 
 .featured-card-badge::before {
-  content: '';
+  content: "";
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 15%,
@@ -61,7 +61,7 @@
   position: relative;
 }
 .pricing-card-border::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: 16px 16px 0 0;
@@ -76,10 +76,15 @@
 
 .footer-border {
   position: relative;
-  background: linear-gradient(90deg, rgba(65, 75, 78, 0) 0%, #414b4e 49.5%, rgba(65, 75, 78, 0) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(65, 75, 78, 0) 0%,
+    #414b4e 49.5%,
+    rgba(65, 75, 78, 0) 100%
+  );
 }
 .footer-border::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: calc(50% - 124px);
@@ -97,7 +102,7 @@
   position: relative;
 }
 .featured-price-title::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 44px;
   top: -7px;
@@ -110,7 +115,7 @@
 }
 
 .featured-price-title::after {
-  content: '';
+  content: "";
   width: 196px;
   height: 4px;
   position: absolute;
@@ -135,7 +140,7 @@
 }
 
 .featured-yellow-highlight-bg {
-  content: '';
+  content: "";
   position: absolute;
   left: 50%;
   margin-left: -124px;

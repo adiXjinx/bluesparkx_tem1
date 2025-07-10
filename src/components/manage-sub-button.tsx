@@ -26,7 +26,7 @@ const ManageSubButton = () => {
       setSubscription(res as Subscription)
     }
     getSubscription()
-  }, [])
+  }, [supabase])
 
   const handleManageSub = async () => {
     setLoading(true)
@@ -42,7 +42,7 @@ const ManageSubButton = () => {
   }
 
   return (
-    <Button onClick={() => handleManageSub()}  disabled={loading}>
+    <Button onClick={() => handleManageSub()} disabled={loading}>
       {loading ? "Redirecting..." : "Manage subscription"}
     </Button>
   )

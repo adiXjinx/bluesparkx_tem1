@@ -1,9 +1,14 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
-import React from 'react'
+import React from "react"
+
+interface PlanData {
+  plans: {
+    name: string
+  }
+}
 
 const Pro = async () => {
-
   const supabase = await createClient()
 
   const {
@@ -20,7 +25,7 @@ const Pro = async () => {
     .eq("user_id", user.id)
     .single()
 
-  const planName = (data?.plans as any)?.name ?? "free"
+  const planName = (data?.plans as unknown as PlanData["plans"])?.name ?? "free"
 
   if (planName !== "pro") {
     return redirect("/")

@@ -1,12 +1,18 @@
 import "../../../styles/checkout.css"
 import { CheckoutContents } from "@/components/checkout/checkout-contents"
 import { createClient } from "@/utils/supabase/server"
-import { CheckoutHeader } from "@/components/checkout/checkout-header"
-import Header from "@/components/header"
 import { redirect } from "next/navigation"
 import { PricingTier } from "@/constants/pricing-tier"
 
-export default async function CheckoutPage({ params }: { params: { priceId: string } }) {
+interface PlanData {
+  plans: {
+    name: string
+    interval: string
+  }
+}
+
+export default async function CheckoutPage({ params }: { params: Promise<{ priceId: string }> }) {
+  const { priceId } = await params
   const supabase = await createClient()
   const {
     data: { user },
@@ -30,17 +36,16 @@ export default async function CheckoutPage({ params }: { params: { priceId: stri
   }
 
   // Get current plan details
-  const currentPlanName = (data?.plans as any)?.name?.toLowerCase() || "free"
-  const currentPlanInterval = (data?.plans as any)?.interval || "lifetime"
+  const currentPlanName =
+    (data?.plans as unknown as PlanData["plans"])?.name?.toLowerCase() || "free"
+  const currentPlanInterval = (data?.plans as unknown as PlanData["plans"])?.interval || "lifetime"
 
   // Get current plan tier
   const currentPlanTier =
     Object.keys(planHierarchy).find((tier) => currentPlanName.includes(tier)) || "free"
 
   // Find the target plan based on priceId
-  const targetPlan = PricingTier.find((tier) =>
-    Object.values(tier.priceId).includes(params.priceId)
-  )
+  const targetPlan = PricingTier.find((tier) => Object.values(tier.priceId).includes(priceId))
 
   if (targetPlan) {
     const targetPlanTier = targetPlan.id
@@ -49,8 +54,8 @@ export default async function CheckoutPage({ params }: { params: { priceId: stri
     const canUpgrade =
       planHierarchy[targetPlanTier] > planHierarchy[currentPlanTier] ||
       (planHierarchy[targetPlanTier] === planHierarchy[currentPlanTier] &&
-        ((currentPlanInterval === "monthly" && targetPlan.priceId.year === params.priceId) ||
-          (currentPlanInterval === "yearly" && targetPlan.priceId.month === params.priceId)))
+        ((currentPlanInterval === "monthly" && targetPlan.priceId.year === priceId) ||
+          (currentPlanInterval === "yearly" && targetPlan.priceId.month === priceId)))
 
     // If user is trying to downgrade, redirect them
     if (!canUpgrade) {

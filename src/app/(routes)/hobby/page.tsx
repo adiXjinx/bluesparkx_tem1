@@ -2,6 +2,12 @@ import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import React from "react"
 
+interface PlanData {
+  plans: {
+    name: string
+  }
+}
+
 const Hobby = async () => {
   const supabase = await createClient()
 
@@ -19,14 +25,14 @@ const Hobby = async () => {
     .eq("user_id", user.id)
     .single()
 
-  const planName = (data?.plans as any)?.name ?? "free"
+  const planName = (data?.plans as unknown as PlanData["plans"])?.name ?? "free"
 
   if (planName !== "hobby" && planName !== "pro") {
     return redirect("/")
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex h-screen flex-col items-center justify-center">
       <h1>You are on the {planName} plan</h1>
     </div>
   )

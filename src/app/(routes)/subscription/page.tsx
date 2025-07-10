@@ -1,5 +1,3 @@
-import LandingPage from "@/components/landing-page/landingpage"
-import ManageSubButton from "@/components/manage-sub-button"
 import { UpgradeButton } from "@/components/upgrate/upgratebutton"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"

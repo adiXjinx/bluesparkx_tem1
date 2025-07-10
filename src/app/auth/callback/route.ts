@@ -131,9 +131,6 @@ export async function GET(request: Request) {
           console.error("Failed to create subscription", subscriptionError.message)
           return NextResponse.redirect(`${origin}/error?code=500&msg=${subscriptionError.message}`)
         }
-
-
-
       }
 
       const forwardedHost = request.headers.get("x-forwarded-host") // original origin before load balancer

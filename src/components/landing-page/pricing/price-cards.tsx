@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { PriceTitle } from "@/components/landing-page/pricing/price-title"
 import { Separator } from "@/components/ui/separator"
 import { FeaturedCardGradient } from "@/components/gradients/featured-card-gradient"
-import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getUserProfile } from "@/actions/supabaseUser_action"
 import { useSubscriptions } from "@/helpers/hooks/useSubscriptions"
@@ -17,6 +16,11 @@ interface Props {
   loading: boolean
   frequency: IBillingFrequency
   priceMap: Record<string, string>
+}
+
+interface PricingTierType {
+  id: string
+  priceId: Record<string, string>
 }
 
 export function PriceCards({ loading, frequency, priceMap }: Props) {
@@ -49,8 +53,6 @@ export function PriceCards({ loading, frequency, priceMap }: Props) {
       return { currentPlanTier: "free", currentPlanInterval: "lifetime" }
     }
 
-  
-
     const currentPlanName = subscription?.plans?.name?.toLowerCase() || "free"
     const currentPlanInterval = subscription?.plans?.interval || "lifetime"
 
@@ -61,7 +63,7 @@ export function PriceCards({ loading, frequency, priceMap }: Props) {
     return { currentPlanTier, currentPlanInterval }
   }
 
-  const handlePlanClick = (tier: any) => {
+  const handlePlanClick = (tier: PricingTierType) => {
     // For free tier, redirect to signup or private page
     if (tier.id === "free") {
       if (isLoggedIn) {
@@ -105,7 +107,7 @@ export function PriceCards({ loading, frequency, priceMap }: Props) {
     }
   }
 
-  const isCurrentPlan = (tier: any) => {
+  const isCurrentPlan = (tier: PricingTierType) => {
     if (!isLoggedIn || subscriptionLoading) {
       return false
     }
@@ -122,7 +124,7 @@ export function PriceCards({ loading, frequency, priceMap }: Props) {
     return isCurrentPlanWithSameFrequency
   }
 
-  const isDowngradeAttempt = (tier: any) => {
+  const isDowngradeAttempt = (tier: PricingTierType) => {
     if (!isLoggedIn || subscriptionLoading) {
       return false
     }
@@ -140,7 +142,7 @@ export function PriceCards({ loading, frequency, priceMap }: Props) {
     return !canUpgrade && planTier !== "free" && !isCurrentPlan(tier)
   }
 
-  const getDisplayValue = (tier: any) => {
+  const getDisplayValue = (tier: PricingTierType) => {
     // For free tier, use lifetime (since it's a one-time free forever)
     if (tier.id === "free") {
       return "lifetime"
@@ -155,7 +157,7 @@ export function PriceCards({ loading, frequency, priceMap }: Props) {
     return Object.keys(tier.priceId)[0] || "month"
   }
 
-  const getPriceSuffix = (tier: any) => {
+  const getPriceSuffix = (tier: PricingTierType) => {
     if (tier.id === "free") {
       return "forever"
     }
