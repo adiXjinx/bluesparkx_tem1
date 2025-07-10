@@ -7,7 +7,7 @@ import { dataURLtoFile } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import { supabaseAdminClient } from "@/utils/supabase/adminclient"
+import { createClient as createAdminClient } from "@/utils/supabase/serverAdmin"
 
 // ! Authendication
 
@@ -25,8 +25,6 @@ export async function signupUser(values: UserModel) {
   if (existinguser) {
     return createResponse("error", "Username already exists")
   }
-
-  
 
   const { data, error } = await supabase.auth.signUp({
     email: values.email,
@@ -293,7 +291,8 @@ export async function getUser() {
 
 export async function deleteUser() {
   const supabase = await createClient()
-  const supabaseAdmin = await supabaseAdminClient()
+  // ! what should i use hear supabase admin server or client
+  const supabaseAdmin = await createAdminClient()
 
   // Get current user
   const { data: userData, error: userError } = await supabase.auth.getUser()
@@ -304,6 +303,7 @@ export async function deleteUser() {
 
   const userId = userData.user.id
 
+  // delete profile picture
   const { error: deleteError } = await supabase.storage
     .from("profile-picture")
     .remove([`${userId}/avatar.jpg`])
@@ -312,12 +312,24 @@ export async function deleteUser() {
     return createResponse("error", "Failed to delete profile picture")
   }
 
-  const { error: profileError } = await supabase.from("profile").delete().eq("user_id", userId)
+  // delete subscription first (due to foreign key constraints)
+  const { error: subscriptionError } = await supabaseAdmin
+    .from("subscriptions")
+    .delete()
+    .eq("user_id", userId)
 
-  if (profileError) {
-    return createResponse("error", profileError.message)
+  if (subscriptionError) {
+    return createResponse("error", `Failed to delete subscriptions: ${subscriptionError.message}`)
   }
 
+  // delete profile after subscriptions are deleted
+  const { error: profileError } = await supabaseAdmin.from("profile").delete().eq("user_id", userId)
+
+  if (profileError) {
+    return createResponse("error", `Failed to delete profile: ${profileError.message}`)
+  }
+
+  // delete user
   const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
   if (authError) {
