@@ -1,26 +1,33 @@
 import { NextResponse } from "next/server"
 // The client you created from the Server-Side Auth instructions
 import { createClient } from "@/utils/supabase/server"
+import { cookies } from "next/headers"
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get("code")
-  // if "next" is in param, use it as the redirect URL
   let next = searchParams.get("next") ?? "/"
+
+  // Read the cookie (no need for await with next/headers cookies)
+  const cookieStore = await cookies()
+  const priceId = cookieStore.get("priceId")?.value // get the value
+
+  if (priceId) {
+    next = `/checkout/${priceId}`
+    // Clear the cookie by setting maxAge=0 (server-side)
+    cookieStore.set("priceId", "", { path: "/", maxAge: 0 })
+  }
+
   if (!next.startsWith("/")) {
-    // if "next" is not a relative URL, use the default
     next = "/"
   }
 
   if (code) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-    console.log(error)
     if (!error) {
       // ! our custom logic
       const { data, error: userError } = await supabase.auth.getUser()
-      console.log(data)
-      console.log(userError)
 
       if (userError) {
         console.error("Error fetching user data", userError.message)
@@ -108,7 +115,6 @@ export async function GET(request: Request) {
           return NextResponse.redirect(`${origin}/error?code=500&msg=${insertError.message}`)
         }
 
-
         //! create a subscription for the user
         const { error: subscriptionError } = await supabase.from("subscriptions").insert({
           user_id: user.id,
@@ -125,9 +131,9 @@ export async function GET(request: Request) {
           console.error("Failed to create subscription", subscriptionError.message)
           return NextResponse.redirect(`${origin}/error?code=500&msg=${subscriptionError.message}`)
         }
-        
-        
-        
+
+
+
       }
 
       const forwardedHost = request.headers.get("x-forwarded-host") // original origin before load balancer
