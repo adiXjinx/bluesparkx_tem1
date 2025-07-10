@@ -1,4 +1,4 @@
-import { Toggle } from '@/components/shared/toggle/toggle';
+import { Toggle } from '@/components/shared/toggle/toggle'
 import { PriceCards } from '@/components/landing-page/pricing/price-cards';
 import { useEffect, useState } from 'react';
 import { BillingFrequency, IBillingFrequency } from '@/constants/billing-frequency';

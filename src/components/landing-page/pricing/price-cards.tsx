@@ -18,6 +18,8 @@ interface Props {
 export function PriceCards({ loading, frequency, priceMap }: Props) {
   const getCheckoutUrl = (tier: any) => {
     //TODO: check if user is logged in and if it not logged in the user first save price id in local storage and then redirect to signup
+    // ! many things are missing hear but i'll make it later
+    // ! these com are made for landing page but not fully and for now iam talking it as landing pages but they are client side rendered which is not good so later i'll have to make it server side rendered and make these app side pricing page with there logic
     // For free tier, redirect to signup
     if (tier.id === 'free') {
       return '/signup';

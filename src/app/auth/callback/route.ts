@@ -107,6 +107,27 @@ export async function GET(request: Request) {
           await new Promise((resolve) => setTimeout(resolve, 1000))
           return NextResponse.redirect(`${origin}/error?code=500&msg=${insertError.message}`)
         }
+
+
+        //! create a subscription for the user
+        const { error: subscriptionError } = await supabase.from("subscriptions").insert({
+          user_id: user.id,
+          plan_id: "4f1bae2c-86b7-4cd0-8a52-c86c82520857",
+          start_date: new Date().toISOString(),
+          end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          payment_status: "paid",
+          grace_until: null,
+          paddle_subscription_id: null,
+          paddle_customer_id: null,
+        })
+
+        if (subscriptionError) {
+          console.error("Failed to create subscription", subscriptionError.message)
+          return NextResponse.redirect(`${origin}/error?code=500&msg=${subscriptionError.message}`)
+        }
+        
+        
+        
       }
 
       const forwardedHost = request.headers.get("x-forwarded-host") // original origin before load balancer
