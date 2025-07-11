@@ -43,7 +43,7 @@ export async function updateSession(request: NextRequest) {
     !user &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/error") &&
-    !request.nextUrl.pathname.startsWith("/api/webhook") &&
+    !request.nextUrl.pathname.includes("/api/webhook") &&
     request.nextUrl.pathname !== "/"
   ) {
     // no user, potentially respond by redirecting the user to the login page
@@ -54,7 +54,18 @@ export async function updateSession(request: NextRequest) {
 
   // ! Redirect **authenticated** users trying to access auth pages: we can check this logic in layout file too
   // todo if you want to you can add starts with logic hear
-  if (user && (pathname === "/auth/login" || pathname === "/auth/signup")) {
+  // if (user && (pathname === "/auth/login" || pathname === "/auth/signup")) {
+  //   const url = request.nextUrl.clone()
+  //   url.pathname = "/"
+  //   return NextResponse.redirect(url)
+  // }
+
+
+  if (
+    user &&
+    request.nextUrl.pathname.includes("/auth/login") ||
+    request.nextUrl.pathname.includes("/auth/signup")
+  ) {
     const url = request.nextUrl.clone()
     url.pathname = "/"
     return NextResponse.redirect(url)
