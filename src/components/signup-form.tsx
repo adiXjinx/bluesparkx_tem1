@@ -41,7 +41,7 @@ const Signup = () => {
     const result = await signupUser(values)
     handleResponse(result)
     if (result.status === "success") {
-      router.push("/auth/login")
+      router.push("/auth/sign-up-success")
     }
     setLoading(false)
   }

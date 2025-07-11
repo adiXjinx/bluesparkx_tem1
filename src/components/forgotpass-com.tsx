@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 
-// 🔐 Zod schema with placeholder for domain logic
 const forgotSchema = z.object({
   email: z
     .string()
@@ -80,28 +80,37 @@ const Forgotpass = () => {
 
   return (
     <div className="mt-20 flex flex-col items-center justify-center gap-6">
-      <h1 className="text-center text-2xl font-semibold">Forgot Password</h1>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-[300px] flex-col gap-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input type="email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <Card className="bg-background">
+        <CardHeader>
+          <CardTitle className="text-2xl">Reset Your Password</CardTitle>
+          <CardDescription>
+            Type in your email and we&apos;ll send you a link to reset your password
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-[300px] flex-col gap-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Sending..." : "Send"}
-          </Button>
-        </form>
-      </Form>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Sending..." : "Send"}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   )
 }

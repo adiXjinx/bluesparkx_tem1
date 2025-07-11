@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 
 const formSchema = z.object({
   password: z
@@ -56,28 +57,35 @@ const ResetPassword = () => {
 
   return (
     <div className="mt-20 flex flex-col items-center justify-center gap-6">
-      <h1 className="text-center text-2xl font-semibold">Reset Password</h1>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-[300px] space-y-4">
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>New Password</FormLabel>
-                <FormControl>
-                  <Input type="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <Card className="bg-background">
+        <CardHeader>
+          <CardTitle className="text-2xl">Reset Your Password</CardTitle>
+          <CardDescription>Please enter your new password below.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-[300px] space-y-4">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Resetting..." : "Reset"}
-          </Button>
-        </form>
-      </Form>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Resetting..." : "Reset"}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   )
 }
