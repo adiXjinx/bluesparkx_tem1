@@ -5,7 +5,7 @@ import {
   SubscriptionUpdatedEvent,
   SubscriptionCanceledEvent,
 } from "@paddle/paddle-node-sdk"
-import { createClient } from "@/utils/supabase/serverAdmin"
+import { createAdminClient } from "@/utils/supabase/serverAdmin"
 import type { Subscription } from "@/lib/database.types"
 
 export class ProcessWebhook {
@@ -30,7 +30,7 @@ export class ProcessWebhook {
   private async updateSubscriptionData(
     eventData: SubscriptionCreatedEvent | SubscriptionUpdatedEvent | SubscriptionCanceledEvent
   ) {
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     try {
       // Get the price ID from the subscription

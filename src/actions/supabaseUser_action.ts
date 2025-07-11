@@ -7,7 +7,7 @@ import { dataURLtoFile } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import { createClient as createAdminClient } from "@/utils/supabase/serverAdmin"
+import { createAdminClient } from "@/utils/supabase/serverAdmin"
 
 // ! Authendication
 
@@ -291,8 +291,7 @@ export async function getUser() {
 
 export async function deleteUser() {
   const supabase = await createClient()
-  // ! what should i use hear supabase admin server or client
-  const supabaseAdmin = await createAdminClient()
+  const supabaseAdmin = createAdminClient()
 
   // Get current user
   const { data: userData, error: userError } = await supabase.auth.getUser()
