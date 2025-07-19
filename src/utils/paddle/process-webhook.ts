@@ -109,9 +109,9 @@ export class ProcessWebhook {
         graceUntil = null
       } else if (eventData.data.status === "past_due") {
         paymentStatus = "past_due"
-        // Set grace period to 4 days from now
+        // Set grace period to 5 days from now
         const gracePeriodDate = new Date()
-        gracePeriodDate.setDate(gracePeriodDate.getDate() + 4)
+        gracePeriodDate.setDate(gracePeriodDate.getDate() + 5)
         graceUntil = gracePeriodDate.toISOString()
       } else if (eventData.data.status === "canceled" || eventData.data.status === "paused") {
         paymentStatus = "canceled"

@@ -1,38 +1,37 @@
 "use client"
 import React, { useState } from "react"
 import { Button } from "./ui/button"
-import { useResponseHandler } from "../helpers/useResponseHandler"
-import { signoutUser } from "@/actions/supabaseUser_action"
 import { useRouter } from "next/navigation"
+import { createClient } from "@/utils/supabase/client"
 
 const Signout = () => {
   const [loading, setLoading] = useState(false)
-  const handleResponse = useResponseHandler()
+  
   const router = useRouter()
 
-  const onsubbmit = async (event: React.FormEvent) => {
-    event.preventDefault()
+  const onsubbmit = async () => {
     setLoading(true)
-    const result = await signoutUser()
-    handleResponse(result)
-    if (result.status === "success") {
+    const supabase = createClient()
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error(error)
+    } else {
       router.push("/auth/login")
     }
     setLoading(false)
   }
 
-  return (
-    <form onSubmit={onsubbmit}>
+  return ( 
       <Button
         size="sm"
         variant="ghost"
         className="rounded-xl px-4"
         disabled={loading}
-        type="submit"
+      type="submit"
+      onClick={onsubbmit}
       >
         {loading ? "Signing Out..." : "Sign out"}
       </Button>
-    </form>
   )
 }
 

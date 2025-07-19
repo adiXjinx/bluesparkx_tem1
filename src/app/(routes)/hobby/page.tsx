@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import React from "react"
 
 interface PlanData {
-  plans: {
+  plan: {
     name: string
   }
 }
@@ -14,22 +14,28 @@ const Hobby = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+ 
 
+  // Remove authentication check - let middleware handle it
+  // The middleware will redirect unauthenticated users to /auth/login
+
+  // Only proceed if user exists (middleware should handle this)
   if (!user) {
-    return redirect("/auth/login")
+    return null // This should never happen due to middleware
   }
 
   const { data } = await supabase
-    .from("subscriptions")
-    .select("plan_id, plans!inner(name)")
+    .from("subscription")
+    .select("*, plan!inner(name)")
     .eq("user_id", user.id)
     .single()
+ 
 
-  const planName = (data?.plans as unknown as PlanData["plans"])?.name ?? "free"
+  const planName = (data?.plan as unknown as PlanData["plan"])?.name ?? "free"
 
-  if (planName !== "hobby" && planName !== "pro") {
-    return redirect("/")
-  }
+    if (planName !== "hobby" && planName !== "pro") {
+      return redirect("/")
+    }
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">

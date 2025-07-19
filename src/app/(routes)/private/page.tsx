@@ -24,26 +24,28 @@ export default async function PrivatePage() {
   const { user, profile } = result.data as { user: User; profile: Profile }
 
   return (
-    <div className="flex flex-col justify-center gap-6 text-center">
-      <div className="container mx-auto">
-        <h1 className="text-2xl font-bold">Hello {user.email}</h1>
-        <p className="text-muted-foreground text-sm">Your ID: {user.id}</p>
-      </div>
-      <div>
-        <h1>Your Profile</h1>
-        <p>First Name: {profile.firstname}</p>
-        <p>Last Name: {profile.lastname}</p>
-        <p>Username: {profile.username}</p>
+    
+      <div className="flex flex-col  justify-center gap-6 text-center ">
+        <div className="container mx-auto">
+          <h1 className="text-2xl font-bold">Hello {user.email}</h1>
+          <p className="text-muted-foreground text-sm">Your ID: {user.id}</p>
+        </div>
+        <div>
+          <h1>Your Profile</h1>
+          <p>First Name: {profile.firstname}</p>
+          <p>Last Name: {profile.lastname}</p>
+          <p>Username: {profile.username}</p>
+          <div className="flex justify-center">
+            <Avatar src={profile.avatar_url} sx={{ width: 50, height: 50 }} />
+        </div>
+        </div>
+        <div>
+          <UpdateProfileComponent profile={profile} />
+        </div>
         <div className="flex justify-center">
-          <Avatar src={profile.avatar_url} sx={{ width: 50, height: 50 }} />
+          <DeleteUserComp />
         </div>
       </div>
-      <div>
-        <UpdateProfileComponent profile={profile} />
-      </div>
-      <div className="flex justify-center">
-        <DeleteUserComp />
-      </div>
-    </div>
+    
   )
 }

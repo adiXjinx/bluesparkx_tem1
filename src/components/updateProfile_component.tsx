@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { UpdateProfileModel, updateProfileModel } from "@/schemas/user_schema"
+import { UpdateProfileSchema, updateProfileSchema } from "@/schemas/user_schema"
 import { useState, useEffect, useMemo } from "react"
 import { updateUserProfile } from "@/actions/supabaseUser_action"
 import { Button } from "./ui/button"
@@ -25,8 +25,8 @@ interface Profile {
 }
 
 export default function UpdateProfileComponent({ profile }: { profile: Profile }) {
-  const form = useForm<UpdateProfileModel>({
-    resolver: zodResolver(updateProfileModel),
+  const form = useForm<UpdateProfileSchema>({
+    resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       fname: profile.firstname || "",
       lname: profile.lastname || "",
@@ -63,11 +63,11 @@ export default function UpdateProfileComponent({ profile }: { profile: Profile }
     setHasChanges(hasFormChanges || hasProfilePicChanges)
   }, [watchedValues, profilePicUrl, originalValues])
 
-  const onSubmit = async (values: UpdateProfileModel) => {
+  const onSubmit = async (values: UpdateProfileSchema) => {
     setLoading(true)
 
     // Build changed fields object
-    const changedFields: Partial<UpdateProfileModel> = {}
+    const changedFields: Partial<UpdateProfileSchema> = {}
     if (values.fname !== originalValues.fname) {
       changedFields.fname = values.fname
     }
@@ -114,7 +114,8 @@ export default function UpdateProfileComponent({ profile }: { profile: Profile }
 
   return (
     <>
-      <div className="mx-auto flex w-full max-w-[440px] flex-col gap-6 rounded-lg border p-6">
+      {/* make background transparent */}
+      <div className="mx-auto flex w-full max-w-[440px] flex-col gap-6 rounded-lg border  p-6 card backdrop-blur-[50px]">
         <h1 className="text-2xl font-bold">Update Profile</h1>
 
         {/* Profile Picture Handler */}
@@ -123,7 +124,7 @@ export default function UpdateProfileComponent({ profile }: { profile: Profile }
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
             <FormField
               control={form.control}
               name="fname"

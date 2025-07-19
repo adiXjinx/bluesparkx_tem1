@@ -15,13 +15,17 @@ const Pro = async () => {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Remove authentication check - let middleware handle it
+  // The middleware will redirect unauthenticated users to /auth/login
+
+  // Only proceed if user exists (middleware should handle this)
   if (!user) {
-    return redirect("/auth/login")
+    return null // This should never happen due to middleware
   }
 
   const { data } = await supabase
     .from("subscriptions")
-    .select("plan_id, plans!inner(name)")
+    .select("*")
     .eq("user_id", user.id)
     .single()
 

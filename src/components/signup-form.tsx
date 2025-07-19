@@ -13,14 +13,14 @@ import { useState } from "react"
 import { signupUser } from "@/actions/supabaseUser_action"
 import { useResponseHandler } from "../helpers/useResponseHandler"
 import { useRouter } from "next/navigation"
-import { UserModel, userModel } from "@/schemas/user_schema"
+import { signupSchema, SignupSchema } from "@/schemas/user_schema"
 import LoginGithub from "./loginGithub"
 import LoginGoogle from "./loginGoogle"
 
 const Signup = () => {
   // define form
-  const form = useForm<UserModel>({
-    resolver: zodResolver(userModel),
+  const form = useForm<SignupSchema>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
       username: "",
       email: "",
@@ -36,7 +36,7 @@ const Signup = () => {
 
   const handleResponse = useResponseHandler()
 
-  const onSubmit = async (values: UserModel) => {
+  const onSubmit = async (values: SignupSchema) => {
     setLoading(true)
     const result = await signupUser(values)
     handleResponse(result)
@@ -51,7 +51,7 @@ const Signup = () => {
       <div className={cn("flex flex-col gap-6")}>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <Card>
+            <Card >
               <CardHeader className="text-center">
                 <CardTitle className="text-xl">Welcome</CardTitle>
                 <CardDescription>Signup with your Github or Google account</CardDescription>

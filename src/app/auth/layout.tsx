@@ -6,13 +6,13 @@ export default async function AuthLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // ! if we want we can use middlewhare logic hear
-  const result = await getUser()
+  // // ! if we want we can use middlewhare logic hear
+  // const result = await getUser()
 
-  // Only redirect if user is successfully authenticated
-  if (result.status === "success") {
-    redirect("/")
-  }
+  // // Only redirect if user is successfully authenticated
+  // if (result.status === "success") {
+  //   redirect("/")
+  // }
 
   // For errors, let the auth pages handle them (don't redirect to /error)
   // This prevents infinite redirect loops with middleware

@@ -19,7 +19,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ price
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return redirect("/auth/login")
+    return null // This should never happen due to middleware
   }
 
   const { data } = await supabase

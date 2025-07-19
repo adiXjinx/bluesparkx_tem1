@@ -1,5 +1,4 @@
 import { Tier } from "@/constants/pricing-tier"
-import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 interface Props {
@@ -7,7 +6,7 @@ interface Props {
 }
 
 export function PriceTitle({ tier }: Props) {
-  const { name, featured, icon } = tier
+  const { name, featured } = tier
   return (
     <div
       className={cn("flex items-center justify-between px-8 pt-8", {
@@ -15,7 +14,6 @@ export function PriceTitle({ tier }: Props) {
       })}
     >
       <div className={"flex items-center gap-[10px]"}>
-        <Image src={icon} height={40} width={40} alt={name} />
         <p className={"text-[20px] leading-[30px] font-semibold"}>{name}</p>
       </div>
       {featured && (

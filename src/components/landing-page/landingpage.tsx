@@ -6,6 +6,7 @@ import "@/app/styles/Landing-page.css"
 const LandingPage = () => {
   const { country } = useAutoCountryDetection()
 
+  
   return (
     <div>
       <Pricing country={country} />

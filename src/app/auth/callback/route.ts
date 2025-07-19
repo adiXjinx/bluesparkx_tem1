@@ -116,7 +116,7 @@ export async function GET(request: Request) {
         }
 
         //! create a subscription for the user
-        const { error: subscriptionError } = await supabase.from("subscriptions").insert({
+        const { error: subscriptionError } = await supabase.from("subscription").insert({
           user_id: user.id,
           plan_id: "4f1bae2c-86b7-4cd0-8a52-c86c82520857",
           start_date: new Date().toISOString(),

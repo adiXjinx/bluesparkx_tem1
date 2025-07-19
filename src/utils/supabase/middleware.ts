@@ -39,37 +39,40 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/auth") &&
-    !request.nextUrl.pathname.startsWith("/error") &&
-    !request.nextUrl.pathname.includes("/api/webhook") &&
-    request.nextUrl.pathname !== "/"
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = "/auth/login"
-    return NextResponse.redirect(url)
-  }
+  // if (
+  //   !user &&
+  //   !request.nextUrl.pathname.includes("/auth/callback") &&
+  //   !request.nextUrl.pathname.includes("/auth/forgot-password") &&
+  //   !request.nextUrl.pathname.includes("/auth/login") &&
+  //   !request.nextUrl.pathname.includes("/auth/signup") &&
+  //   !request.nextUrl.pathname.includes("/auth/confirm") &&
+  //   !request.nextUrl.pathname.includes("/auth/sign-up-success") &&
+  //   !request.nextUrl.pathname.startsWith("/error") &&
+  //   !request.nextUrl.pathname.includes("/api/webhook") &&
+  //   request.nextUrl.pathname !== "/"
+  // ) {
+  //   // no user, potentially respond by redirecting the user to the login page
+  //   const url = request.nextUrl.clone()
+  //   url.pathname = "/auth/login"
+  //   return NextResponse.redirect(url)
+  // }
 
   // ! Redirect **authenticated** users trying to access auth pages: we can check this logic in layout file too
-  // todo if you want to you can add starts with logic hear
+  // // todo if you want to you can add starts with logic hear
   // if (user && (pathname === "/auth/login" || pathname === "/auth/signup")) {
   //   const url = request.nextUrl.clone()
   //   url.pathname = "/"
   //   return NextResponse.redirect(url)
   // }
 
-
-  if (
-    user &&
-    request.nextUrl.pathname.includes("/auth/login") ||
-    request.nextUrl.pathname.includes("/auth/signup")
-  ) {
-    const url = request.nextUrl.clone()
-    url.pathname = "/"
-    return NextResponse.redirect(url)
-  }
+  // if (
+  //   (user && request.nextUrl.pathname.includes("/auth/login")) ||
+  //   request.nextUrl.pathname.includes("/auth/signup")
+  // ) {
+  //   const url = request.nextUrl.clone()
+  //   url.pathname = "/"
+  //   return NextResponse.redirect(url)
+  // }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:

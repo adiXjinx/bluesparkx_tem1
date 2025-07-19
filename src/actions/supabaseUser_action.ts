@@ -1,9 +1,9 @@
 "use server"
 
-import { LoginModel, UpdateProfileModel, UserModel } from "@/schemas/user_schema"
+import { LoginSchema, UpdateProfileSchema, SignupSchema } from "@/schemas/user_schema"
 import { createResponse } from "@/helpers/createResponce"
 import { createClient } from "@/utils/supabase/server"
-import { dataURLtoFile } from "@/lib/utils"
+
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
@@ -11,7 +11,7 @@ import { createAdminClient } from "@/utils/supabase/serverAdmin"
 
 // ! Authendication
 
-export async function signupUser(values: UserModel) {
+export async function signupUser(values: SignupSchema) {
   const origin = (await headers()).get("origin")
   const supabase = await createClient()
 
@@ -54,7 +54,7 @@ export async function signupUser(values: UserModel) {
   }
 }
 
-export async function signinUser(values: LoginModel) {
+export async function signinUser(values: LoginSchema) {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -92,17 +92,17 @@ export async function signinUser(values: LoginModel) {
   }
 }
 
-export async function signoutUser() {
-  const supabase = await createClient()
+// export async function signoutUser() {
+//   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signOut()
+//   const { error } = await supabase.auth.signOut()
 
-  if (error) {
-    return createResponse("error", error.message)
-  } else {
-    return createResponse("success", "Signed out successfully")
-  }
-}
+//   if (error) {
+//     return createResponse("error", error.message)
+//   } else {
+//     return createResponse("success", "Signed out successfully")
+//   }
+// }
 
 export async function forgotPassword(values: FormData) {
   const supabase = await createClient()
@@ -195,7 +195,7 @@ export async function getUserProfile() {
   })
 }
 
-export async function updateUserProfile(values: Partial<UpdateProfileModel>) {
+export async function updateUserProfile(values: Partial<UpdateProfileSchema>) {
   const supabase = await createClient()
 
   // Get current user
@@ -226,6 +226,12 @@ export async function updateUserProfile(values: Partial<UpdateProfileModel>) {
     try {
       const file = await dataURLtoFile(values.avatar_url, `avatar.jpg`)
 
+      // Helper function to convert data URL to File object
+      async function dataURLtoFile(dataURL: string, filename: string): Promise<File> {
+        const response = await fetch(dataURL)
+        const blob = await response.blob()
+        return new File([blob], filename, { type: "image/jpeg" })
+      }
       const filePath = `${userData.user.id}/avatar.jpg`
 
       // upload file to supabase storage
@@ -313,15 +319,15 @@ export async function deleteUser() {
 
   // delete subscription first (due to foreign key constraints)
   const { error: subscriptionError } = await supabaseAdmin
-    .from("subscriptions")
+    .from("subscription")
     .delete()
     .eq("user_id", userId)
 
   if (subscriptionError) {
-    return createResponse("error", `Failed to delete subscriptions: ${subscriptionError.message}`)
+    return createResponse("error", `Failed to delete subscription: ${subscriptionError.message}`)
   }
 
-  // delete profile after subscriptions are deleted
+  // delete profile after subscription is deleted
   const { error: profileError } = await supabaseAdmin.from("profile").delete().eq("user_id", userId)
 
   if (profileError) {

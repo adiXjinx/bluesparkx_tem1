@@ -1,7 +1,6 @@
 "use client"
 
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter, useSearchParams } from "next/navigation"
 import { resetPassword } from "@/actions/supabaseUser_action"
@@ -18,31 +17,23 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
+import { ResetPasswordSchema, resetPasswordSchema } from "@/schemas/user_schema"
 
-const formSchema = z.object({
-  password: z
-    .string()
-    .min(8, { message: "Must be at least 8 characters" })
-    .regex(/[a-z]/, { message: "Must include a lowercase letter" })
-    .regex(/[A-Z]/, { message: "Must include an uppercase letter" })
-    .regex(/[0-9]/, { message: "Must include a number" }),
-})
 
-type FormValues = z.infer<typeof formSchema>
 
 const ResetPassword = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const handleResponse = useResponseHandler()
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ResetPasswordSchema>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       password: "",
     },
   })
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: ResetPasswordSchema) => {
     const code = searchParams.get("code") as string
     const formData = new FormData()
     formData.append("password", data.password)
