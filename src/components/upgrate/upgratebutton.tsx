@@ -29,7 +29,7 @@ export function UpgradeButton() {
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="bg-background/80 border-border/50 max-h-[90vh] w-[70vw] !max-w-[90vw] max-w-[90vw] overflow-y-auto shadow-2xl backdrop-blur-xl [-ms-overflow-style:none] [scrollbar-width:none] sm:!max-w-[90vw] [&::-webkit-scrollbar]:hidden">
+        <DialogContent className="bg-background/80 border-border/50 max-h-[90vh] w-[70vw] max-w-[90vw] overflow-y-auto shadow-2xl backdrop-blur-xl [-ms-overflow-style:none] [scrollbar-width:none] sm:!max-w-[90vw] [&::-webkit-scrollbar]:hidden">
           <DialogHeader>
             <DialogTitle className="from-primary to-primary/60 bg-gradient-to-r bg-clip-text text-center text-2xl font-bold text-transparent">
               Upgrade Your Plan

@@ -9,7 +9,7 @@ const Hobby = async () => {
     return redirect("/")
   }
 
-  const planName = subscriptionResult.data?.plan ?? "free"
+  const planName = subscriptionResult.data?.plan.name ?? "free"
 
   if (planName !== "hobby" && planName !== "pro") {
     return redirect("/")

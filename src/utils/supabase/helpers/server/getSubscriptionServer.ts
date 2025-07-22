@@ -43,7 +43,7 @@ export async function getSubscriptionServer() {
     return createResponse("success", "Subscription retrieved successfully", {
     user: user.data,
     subscription: subscriptionData,
-    plan: subscriptionData.plan.name,
+    plan: subscriptionData.plan,
   });
   }
 
