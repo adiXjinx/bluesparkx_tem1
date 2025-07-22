@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react"
-import { SupabaseClient, User } from "@supabase/supabase-js"
+import { User } from "@supabase/supabase-js"
+import { getUserClient } from "@/utils/supabase/helpers/client/getUserClient"
 
-export function useUserInfo(supabase: SupabaseClient) {
+export function useUserInfo() {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await supabase.auth.getUser()
-      if (data?.user) {
-        setUser(data.user)
+      const userResult = await getUserClient()
+      if (userResult.status === "success" && userResult.data) {
+        setUser(userResult.data)
       }
     })()
-  }, [supabase.auth])
+  }, [])
 
   return { user }
 }

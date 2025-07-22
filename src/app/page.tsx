@@ -1,12 +1,11 @@
 import LandingPage from "@/components/landing-page/landingpage"
-import { createClient } from "@/utils/supabase/server"
- // const supabase = await createClient()
-  // const { data } = await supabase.auth.getUser()
-  // console.log(data)
-  // if (data.user) {
-  //   const { data: profile } = await supabase.from("profile").select("*").eq("user_id", data.user.id).single()
-  //   console.log(profile)
-  // }
+// const supabase = await createClient()
+// const { data } = await supabase.auth.getUser()
+// console.log(data)
+// if (data.user) {
+//   const { data: profile } = await supabase.from("profile").select("*").eq("user_id", data.user.id).single()
+//   console.log(profile)
+// }
 const Homepage = async () => {
   // const supabase = await createClient()
   // const { data } = await supabase.auth.getUser()
@@ -17,7 +16,7 @@ const Homepage = async () => {
   // }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden ">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
       {/* Spark Glow */}
       <div
         className="absolute top-1/4 left-1/3 z-0 h-[320px] w-[480px] rounded-full opacity-30 blur-3xl"
@@ -25,7 +24,7 @@ const Homepage = async () => {
           background: "radial-gradient(circle, #2b81ff 0%, #0a1026 80%)",
         }}
       />
-      <div className="relative z-10 mb-8 text-4xl font-extrabolddrop-shadow-lg">
+      <div className="font-extrabolddrop-shadow-lg relative z-10 mb-8 text-4xl">
         BlueSparkx Dark Mode
       </div>
       <div className="flex flex-col items-center justify-center">
@@ -36,7 +35,7 @@ const Homepage = async () => {
           A digital forge where indie SaaS dreams come alive. BlueSparkx is the motherbrand crafting
           bold, powerful tools for tomorrow.
         </p>
-        <div className="mt-8 text-sm ">
+        <div className="mt-8 text-sm">
           🚧 Under construction — testing ground for future sparks.
         </div>
       </div>

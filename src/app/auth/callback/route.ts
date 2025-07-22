@@ -1,19 +1,35 @@
 import { NextResponse } from "next/server"
 // The client you created from the Server-Side Auth instructions
 import { createClient } from "@/utils/supabase/server"
+import { getUserServer } from "@/utils/supabase/helpers/server/getUserServer"
 import { cookies } from "next/headers"
+import { PricingTier, Tier } from "@/constants/pricing-tier"
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get("code")
   let next = searchParams.get("next") ?? "/"
+  let trialPlan = false
 
-  // Read the cookie (no need for await with next/headers cookies)
+  // Read the cookie
   const cookieStore = await cookies()
   const priceId = cookieStore.get("priceId")?.value // get the value
 
+  let tier: Tier | undefined
+
   if (priceId) {
-    next = `/checkout/${priceId}`
+    // Find the tier based on priceId
+    tier = PricingTier.find((tier) => Object.values(tier.priceId).includes(priceId))
+
+    if (tier) {
+      const trialDays = tier.trialDays ?? 0
+
+      if (trialDays > 0) {
+        trialPlan = true
+      } else {
+        next = `/checkout/${priceId}`
+      }
+    }
     // Clear the cookie by setting maxAge=0 (server-side)
     cookieStore.set("priceId", "", { path: "/", maxAge: 0 })
   }
@@ -27,22 +43,22 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
       // ! our custom logic
-      const { data, error: userError } = await supabase.auth.getUser()
+      const userResult = await getUserServer()
 
-      if (userError) {
-        console.error("Error fetching user data", userError.message)
-        return NextResponse.redirect(`${origin}/error?code=500&msg=${userError.message}`)
+      if (userResult.status === "error" || !userResult.data) {
+        console.error("Error fetching user data", userResult.message)
+        return NextResponse.redirect(`${origin}/error?code=500&msg=${userResult.message}`)
       }
 
       // Check if profile exists
       const { data: existinguser } = await supabase
         .from("profile")
         .select("*")
-        .eq("user_id", data.user.id)
+        .eq("user_id", userResult.data.id)
         .single()
 
       if (!existinguser) {
-        const user = data.user
+        const user = userResult.data
         const metadata = user.user_metadata
 
         // Generate base username
@@ -116,20 +132,44 @@ export async function GET(request: Request) {
         }
 
         //! create a subscription for the user
-        const { error: subscriptionError } = await supabase.from("subscription").insert({
-          user_id: user.id,
-          plan_id: "4f1bae2c-86b7-4cd0-8a52-c86c82520857",
-          start_date: new Date().toISOString(),
-          end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          payment_status: "paid",
-          grace_until: null,
-          paddle_subscription_id: null,
-          paddle_customer_id: null,
-        })
+        if (trialPlan && tier) {
+          // Create trial subscription - always use monthly plan for trials
+          const { error: subscriptionError } = await supabase.from("subscription").insert({
+            user_id: user.id,
+            plan_id: tier.planId.month,
+            start_date: new Date().toISOString(),
+            end_date: new Date(Date.now() + tier.trialDays * 24 * 60 * 60 * 1000).toISOString(),
+            payment_status: "trialing",
+            grace_until: null,
+            paddle_subscription_id: null,
+            paddle_customer_id: null,
+          })
 
-        if (subscriptionError) {
-          console.error("Failed to create subscription", subscriptionError.message)
-          return NextResponse.redirect(`${origin}/error?code=500&msg=${subscriptionError.message}`)
+          if (subscriptionError) {
+            console.error("Failed to create trial subscription", subscriptionError.message)
+            return NextResponse.redirect(
+              `${origin}/error?code=500&msg=${subscriptionError.message}`
+            )
+          }
+        } else {
+          // Create regular subscription (free plan)
+          const { error: subscriptionError } = await supabase.from("subscription").insert({
+            user_id: user.id,
+            plan_id: "4f1bae2c-86b7-4cd0-8a52-c86c82520857",
+            start_date: new Date().toISOString(),
+            end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            payment_status: "paid",
+            grace_until: null,
+            paddle_subscription_id: null,
+            paddle_customer_id: null,
+          })
+
+          if (subscriptionError) {
+            console.error("Failed to create subscription", subscriptionError.message)
+            return NextResponse.redirect(
+              `${origin}/error?code=500&msg=${subscriptionError.message}`
+            )
+          }
         }
       }
 

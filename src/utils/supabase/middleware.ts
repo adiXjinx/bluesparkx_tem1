@@ -37,7 +37,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const pathname = request.nextUrl.pathname
+  // const pathname = request.nextUrl.pathname
 
   // if (
   //   !user &&

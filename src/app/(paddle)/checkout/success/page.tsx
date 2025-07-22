@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import "../../../styles/checkout.css"
-import { createClient } from "@/utils/supabase/server"
+import { getUserServer } from "@/utils/supabase/helpers/server/getUserServer"
 
 export default async function SuccessPage() {
-  const supabase = await createClient()
-  const { data } = await supabase.auth.getUser()
+  const userResult = await getUserServer()
 
   return (
     <main>
@@ -39,7 +38,7 @@ export default async function SuccessPage() {
               Success! Your payment is complete, and you’re all set.
             </p>
             <Button variant={"default"} asChild={true}>
-              {data.user ? (
+              {userResult.status === "success" && userResult.data ? (
                 <Link href={"/private"}>Go to Dashboard</Link>
               ) : (
                 <Link href={"/"}>Go to Home</Link>

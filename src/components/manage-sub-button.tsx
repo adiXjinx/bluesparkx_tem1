@@ -1,32 +1,26 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import { createClient } from "@/utils/supabase/client"
 import { createCustomerPortalLink } from "@/actions/paddle/create-customer-portal-link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Subscription } from "@/lib/database.types"
+import { getSubscriptionClient } from "@/utils/supabase/helpers/client/getSubscriptionClient"
 
 const ManageSubButton = () => {
   const router = useRouter()
-  const supabase = createClient()
 
   const [loading, setLoading] = useState(false)
   const [subscription, setSubscription] = useState<Subscription | null>(null)
 
   useEffect(() => {
     const getSubscription = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      const { data: res } = await supabase
-        .from("subscriptions")
-        .select("*")
-        .eq("user_id", user?.id)
-        .single()
-      setSubscription(res as Subscription)
+      const subscriptionResult = await getSubscriptionClient()
+      if (subscriptionResult.status === "success" && subscriptionResult.data?.subscription) {
+        setSubscription(subscriptionResult.data.subscription as Subscription)
+      }
     }
     getSubscription()
-  }, [supabase])
+  }, [])
 
   const handleManageSub = async () => {
     setLoading(true)

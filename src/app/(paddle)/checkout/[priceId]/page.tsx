@@ -1,11 +1,11 @@
 import "../../../styles/checkout.css"
 import { CheckoutContents } from "@/components/checkout/checkout-contents"
-import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { PricingTier } from "@/constants/pricing-tier"
+import { getSubscriptionServer } from "@/utils/supabase/helpers/server/getSubscriptionServer"
 
 interface PlanData {
-  plans: {
+  plan: {
     name: string
     interval: string
   }
@@ -13,20 +13,27 @@ interface PlanData {
 
 export default async function CheckoutPage({ params }: { params: Promise<{ priceId: string }> }) {
   const { priceId } = await params
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // const supabase = await createClient()
+  // const {
+  //   data: { user },
+  // } = await supabase.auth.getUser()
 
-  if (!user) {
-    return null // This should never happen due to middleware
+  // if (!user) {
+  //   return null // This should never happen due to middleware
+  // }
+
+  // const { data } = await supabase
+  //   .from("subscription")
+  //   .select("plan_id, plan!inner(name, interval)")
+  //   .eq("user_id", user.id)
+  //   .single()
+
+  const { data, status } = await getSubscriptionServer()
+  if (status === "error") {
+    return redirect("/auth/login")
   }
 
-  const { data } = await supabase
-    .from("subscriptions")
-    .select("plan_id, plans!inner(name, interval)")
-    .eq("user_id", user.id)
-    .single()
+  const user = data?.subscription
 
   // Define plan hierarchy (higher number = higher tier)
   const planHierarchy: Record<string, number> = {
@@ -36,9 +43,8 @@ export default async function CheckoutPage({ params }: { params: Promise<{ price
   }
 
   // Get current plan details
-  const currentPlanName =
-    (data?.plans as unknown as PlanData["plans"])?.name?.toLowerCase() || "free"
-  const currentPlanInterval = (data?.plans as unknown as PlanData["plans"])?.interval || "lifetime"
+  const currentPlanName = (data?.plan as unknown as PlanData["plan"])?.name?.toLowerCase() || "free"
+  const currentPlanInterval = (data?.plan as unknown as PlanData["plan"])?.interval || "lifetime"
 
   // Get current plan tier
   const currentPlanTier =

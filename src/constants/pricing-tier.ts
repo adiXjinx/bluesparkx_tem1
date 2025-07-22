@@ -8,6 +8,7 @@ export interface Tier {
   priceId: Record<string, string>
   price: Record<string, number>
   planId: Record<string, string> // UUID from your plans table
+  trialDays: number
 }
 
 export const PricingTier: Tier[] = [
@@ -21,6 +22,7 @@ export const PricingTier: Tier[] = [
     priceId: { lifetime: "" }, // No Paddle price ID for free plan
     price: { lifetime: 0 },
     planId: { lifetime: "4f1bae2c-86b7-4cd0-8a52-c86c82520857" },
+    trialDays: 0,
   },
   {
     name: "Pro",
@@ -38,11 +40,12 @@ export const PricingTier: Tier[] = [
       month: "pri_01jza23mbtxwejg1ma9a5nrf1h",
       year: "pri_01jza24jn0tvzd49c9dnmt36c2",
     },
-    price: { month: 5, year: 49 },
+    price: { month: 10, year: 100 },
     planId: {
       month: "c22f00f3-6521-456a-a606-cb8779d64893",
       year: "49827051-f0e6-4a72-9590-e195a0eed854",
     },
+    trialDays: 0,
   },
   {
     name: "Hobby",
@@ -61,10 +64,11 @@ export const PricingTier: Tier[] = [
       month: "pri_01jzd8efxaemahtenr52c5yyse",
       year: "pri_01jzd8fy9hw6v9n89aa1dwjcws",
     },
-    price: { month: 10, year: 100 }, // You'll need to provide the actual prices
+    price: { month: 5, year: 50 }, // You'll need to provide the actual prices
     planId: {
       month: "hobby-monthly-plan-id", // You'll need to provide the actual plan IDs
       year: "hobby-yearly-plan-id",
     },
+    trialDays: 7,
   },
 ]

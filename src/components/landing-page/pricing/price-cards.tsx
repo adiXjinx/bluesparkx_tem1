@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { PriceTitle } from "@/components/landing-page/pricing/price-title"
 import { Separator } from "@/components/ui/separator"
-import { FeaturedCardGradient } from "@/components/gradients/featured-card-gradient"
 import { useEffect, useState } from "react"
 import { getUserProfile } from "@/actions/supabaseUser_action"
 import { useSubscriptions } from "@/helpers/hooks/useSubscriptions"
@@ -100,8 +99,9 @@ export function PriceCards({ loading, frequency, priceMap }: Props) {
       // User is not logged in - save price ID to cookie and redirect to signup
       const priceId = tier.priceId[frequency.value]
       if (priceId) {
-        document.cookie = `priceId=${priceId}; path=/; max-age=3600; samesite=lax`
-        console.log("cookie set for priceId:", priceId)
+        // Set cookie without httpOnly (client-side can't set httpOnly)
+        document.cookie = `priceId=${priceId}; path=/; max-age=3600; samesite=lax; secure`
+
         router.push("/auth/signup")
       }
     }
@@ -178,7 +178,7 @@ export function PriceCards({ loading, frequency, priceMap }: Props) {
             <div
               className={cn("pricing-card-border flex flex-col gap-5 rounded-lg rounded-b-none")}
             >
-              {tier.featured && <FeaturedCardGradient />}
+              {tier.featured}
               <PriceTitle tier={tier} />
               <PriceAmount
                 loading={loading}

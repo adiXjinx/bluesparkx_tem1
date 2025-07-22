@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Subscription, Plan } from "@/lib/database.types"
-import { createClient } from "@/utils/supabase/client"
+import { getSubscriptionClient } from "@/utils/supabase/helpers/client/getSubscriptionClient"
 
 type SubscriptionWithPlan = Subscription & { plans: Plan }
 
@@ -14,41 +14,16 @@ export function useSubscriptions() {
     setLoading(true)
     setError(null)
 
-    const supabase = createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const subscriptionResult = await getSubscriptionClient()
 
-    if (!user?.id) {
-      setError("User not authenticated")
+    if (subscriptionResult.status === "error") {
+      setError(subscriptionResult.message)
       setLoading(false)
       return
     }
 
-    const { data, error: subError } = await supabase
-      .from("subscriptions")
-      .select(
-        `
-          *,
-          plans:plan_id (
-            id,
-            name,
-            paddle_product_id,
-            interval,
-            price,
-            is_active,
-            discription
-          )
-        `
-      )
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-
-    if (subError) {
-      setError(subError.message)
-    } else {
-      setSubscription(data[0])
+    if (subscriptionResult.data?.subscription) {
+      setSubscription(subscriptionResult.data.subscription as SubscriptionWithPlan)
     }
 
     setLoading(false)

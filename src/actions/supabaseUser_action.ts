@@ -3,6 +3,8 @@
 import { LoginSchema, UpdateProfileSchema, SignupSchema } from "@/schemas/user_schema"
 import { createResponse } from "@/helpers/createResponce"
 import { createClient } from "@/utils/supabase/server"
+import { getUserServer } from "@/utils/supabase/helpers/server/getUserServer"
+import { getProfileServer } from "@/utils/supabase/helpers/server/getProfileServer"
 
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
@@ -161,51 +163,20 @@ export async function signinWithAuth(provider: "google" | "github") {
 // ! User and Profile
 
 export async function getUserProfile() {
-  const supabase = await createClient()
-
-  // Get current user
-  const { data: userData, error: userError } = await supabase.auth.getUser()
-
-  if (userError) {
-    return createResponse("error", userError.message)
-  }
-
-  if (!userData.user) {
-    return createResponse("error", "User not authenticated")
-  }
-
-  // Get user profile
-  const { data: profileData, error: profileError } = await supabase
-    .from("profile")
-    .select("*")
-    .eq("user_id", userData.user.id)
-    .single()
-
-  if (profileError) {
-    return createResponse("error", profileError.message)
-  }
-
-  if (!profileData) {
-    return createResponse("error", "Profile not found")
-  }
-
-  return createResponse("success", "Profile retrieved successfully", {
-    user: userData.user,
-    profile: profileData,
-  })
+  return await getProfileServer()
 }
 
 export async function updateUserProfile(values: Partial<UpdateProfileSchema>) {
   const supabase = await createClient()
 
   // Get current user
-  const { data: userData, error: userError } = await supabase.auth.getUser()
+  const userResult = await getUserServer()
 
-  if (userError) {
-    return createResponse("error", userError.message)
+  if (userResult.status === "error") {
+    return createResponse("error", userResult.message)
   }
 
-  if (!userData.user) {
+  if (!userResult.data) {
     return createResponse("error", "User not authenticated")
   }
 
@@ -215,7 +186,7 @@ export async function updateUserProfile(values: Partial<UpdateProfileSchema>) {
   if (values.avatar_url === null) {
     const { error: deleteError } = await supabase.storage
       .from("profile-picture")
-      .remove([`${userData.user.id}/avatar.jpg`])
+      .remove([`${userResult.data.id}/avatar.jpg`])
 
     if (deleteError) {
       return createResponse("error", "Failed to delete old profile picture")
@@ -232,7 +203,7 @@ export async function updateUserProfile(values: Partial<UpdateProfileSchema>) {
         const blob = await response.blob()
         return new File([blob], filename, { type: "image/jpeg" })
       }
-      const filePath = `${userData.user.id}/avatar.jpg`
+      const filePath = `${userResult.data.id}/avatar.jpg`
 
       // upload file to supabase storage
       const { error: uploadError } = await supabase.storage
@@ -268,7 +239,10 @@ export async function updateUserProfile(values: Partial<UpdateProfileSchema>) {
     return createResponse("error", "No fields to update")
   }
 
-  const { error } = await supabase.from("profile").update(updateObj).eq("user_id", userData.user.id)
+  const { error } = await supabase
+    .from("profile")
+    .update(updateObj)
+    .eq("user_id", userResult.data.id)
 
   if (error?.message === 'duplicate key value violates unique constraint "User_username_key"') {
     return createResponse("error", "Username already exists")
@@ -280,17 +254,7 @@ export async function updateUserProfile(values: Partial<UpdateProfileSchema>) {
 }
 
 export async function getUser() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-
-  if (error) {
-    return createResponse("error", error.message)
-  } else if (!data.user) {
-    return createResponse("error", "User not found")
-  } else {
-    return createResponse("success", "User retrieved successfully", data.user)
-  }
+  return await getUserServer()
 }
 
 // ! Delete
@@ -300,13 +264,13 @@ export async function deleteUser() {
   const supabaseAdmin = createAdminClient()
 
   // Get current user
-  const { data: userData, error: userError } = await supabase.auth.getUser()
+  const userResult = await getUserServer()
 
-  if (userError || !userData.user) {
-    return createResponse("error", userError?.message || "User not authenticated")
+  if (userResult.status === "error" || !userResult.data) {
+    return createResponse("error", userResult.message || "User not authenticated")
   }
 
-  const userId = userData.user.id
+  const userId = userResult.data.id
 
   // delete profile picture
   const { error: deleteError } = await supabase.storage

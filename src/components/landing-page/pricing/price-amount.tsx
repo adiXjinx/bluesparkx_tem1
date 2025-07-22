@@ -1,6 +1,5 @@
 import { Tier } from "@/constants/pricing-tier"
 import { cn } from "@/lib/utils"
-import { Skeleton } from "@/components/ui/skeleton"
 
 interface Props {
   loading: boolean
@@ -29,10 +28,23 @@ export function PriceAmount({ loading, priceMap, priceSuffix, tier, value }: Pro
     return "N/A"
   }
 
+  const PrestaticPrice = tier.price[value]
+  const staticPrice = PrestaticPrice === 0 ? "Free" : `$${PrestaticPrice}`
+
+  let staticPriceSuffix = "per user/month"
+  if (staticPrice === "Free") {
+    staticPriceSuffix = "forever"
+  }
+
   return (
     <div className="mt-6 flex flex-col px-8">
       {loading ? (
-        <Skeleton className="bg-border h-[96px] w-full" />
+        <>
+          <div className={cn("text-[80px] leading-[96px] font-medium tracking-[-1.6px]")}>
+            {staticPrice}
+          </div>
+          <div className={cn("text-[12px] leading-[12px] font-medium")}>{staticPriceSuffix}</div>
+        </>
       ) : (
         <>
           <div className={cn("text-[80px] leading-[96px] font-medium tracking-[-1.6px]")}>

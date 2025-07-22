@@ -28,7 +28,7 @@ export interface Subscription {
   plan_id: string | typeof FREE_PLAN_ID // UUID // default is free plan
   paddle_subscription_id: string | null
   paddle_customer_id: string | null
-  end_date: string
+  end_date: string //also used for trial end date
   start_date: string
   updated_at: string
   payment_status: "paid" | "past_due" | "canceled" | "trialing"

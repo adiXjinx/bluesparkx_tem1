@@ -1,41 +1,19 @@
-import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import React from "react"
-
-interface PlanData {
-  plan: {
-    name: string
-  }
-}
+import { getSubscriptionServer } from "@/utils/supabase/helpers/server/getSubscriptionServer"
 
 const Hobby = async () => {
-  const supabase = await createClient()
+  const subscriptionResult = await getSubscriptionServer()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
- 
-
-  // Remove authentication check - let middleware handle it
-  // The middleware will redirect unauthenticated users to /auth/login
-
-  // Only proceed if user exists (middleware should handle this)
-  if (!user) {
-    return null // This should never happen due to middleware
+  if (subscriptionResult.status === "error") {
+    return redirect("/")
   }
 
-  const { data } = await supabase
-    .from("subscription")
-    .select("*, plan!inner(name)")
-    .eq("user_id", user.id)
-    .single()
- 
+  const planName = subscriptionResult.data?.plan ?? "free"
 
-  const planName = (data?.plan as unknown as PlanData["plan"])?.name ?? "free"
-
-    if (planName !== "hobby" && planName !== "pro") {
-      return redirect("/")
-    }
+  if (planName !== "hobby" && planName !== "pro") {
+    return redirect("/")
+  }
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">

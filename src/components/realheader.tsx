@@ -1,22 +1,15 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./ui/mode-toggle"
-import { createClient } from "@/utils/supabase/server"
+import { getProfileServer } from "@/utils/supabase/helpers/server/getProfileServer"
 import Signout from "./sign-out"
 import Avatar from "@mui/material/Avatar"
 
 export default async function RealHeader() {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  const { data: profile } = await supabase
-    .from("profile")
-    .select("*")
-    .eq("user_id", user?.id)
-    .single()
+  const profileResult = await getProfileServer()
+  
+  const user = profileResult.status === "success" ? profileResult.data?.user : null
+  const profile = profileResult.status === "success" ? profileResult.data?.profile : null
 
   return (
     <header className="glass vercel-shadow border-border bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-md">

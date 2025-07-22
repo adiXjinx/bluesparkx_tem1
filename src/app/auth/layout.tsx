@@ -1,6 +1,3 @@
-import { getUser } from "@/actions/supabaseUser_action"
-import { redirect } from "next/navigation"
-
 export default async function AuthLayout({
   children,
 }: Readonly<{
